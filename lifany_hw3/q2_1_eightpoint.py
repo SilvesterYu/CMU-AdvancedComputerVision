@@ -57,11 +57,10 @@ def eightpoint(pts1, pts2, M):
     F = refineF(F, npts1[:, :-1], npts2[:, :-1])
     
     # (6) Unscale the fundamental matrix
-    f2 = np.matmul(T, np.matmul(F, T))
-    f2 = f2 / f2[2, 2]
+    F = np.matmul(T, np.matmul(F, T))/F[-1][-1]
     print("F", F)
 
-    return f2
+    return F
 
 
 if __name__ == "__main__":
