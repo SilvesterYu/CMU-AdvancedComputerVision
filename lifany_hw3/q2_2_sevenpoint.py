@@ -50,9 +50,9 @@ def sevenpoint(pts1, pts2, M):
 
     # (4) Pick the last two colum vector of vT.T (the two null space solution f1 and f2)
     f1 = VT[-1, :].reshape((3, 3))
-    print("original f1", f1)
+    #print("original f1", f1)
     f2 = VT[-2, :].reshape((3, 3))
-    print("original f2", f2)
+    #print("original f2", f2)
 
     # (5) Use the singularity constraint to solve for the cubic polynomial equation of  F = a*f1 + (1-a)*f2 that leads to 
     #     det(F) = 0. Solving this polynomial will give you one or three real solutions of the fundamental matrix. 
@@ -78,6 +78,9 @@ def sevenpoint(pts1, pts2, M):
     # print("f0", det_func(0))
     c3, c2, c1, c0 = res[0], res[1], res[2], res[3]
     roots = np.polynomial.polynomial.polyroots([c3, c2, c1, c0])
+    # print("roots", roots)
+    roots = roots[np.invert(np.iscomplex(roots))]
+    #breakpoint()
 
     # (6) Unscale the fundamental matrixes and return as Farray
     Farray = []
@@ -132,6 +135,8 @@ if __name__ == "__main__":
     choices = []
     M = np.max([*im1.shape, *im2.shape])
     for i in range(max_iter):
+        if i % 100 == 0:
+            print(i, "-"*100)
         choice = np.random.choice(range(pts1.shape[0]), 7)
         pts1_choice = pts1[choice, :]
         pts2_choice = pts2[choice, :]

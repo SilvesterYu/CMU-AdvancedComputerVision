@@ -84,3 +84,4 @@ if __name__ == "__main__":
     assert F[2, 2] == 1
     assert np.linalg.matrix_rank(F) == 2
     assert np.mean(calc_epi_error(pts1_homogenous, pts2_homogenous, F)) < 1
+    print(np.mean(calc_epi_error(pts1_homogenous, pts2_homogenous, F)))
