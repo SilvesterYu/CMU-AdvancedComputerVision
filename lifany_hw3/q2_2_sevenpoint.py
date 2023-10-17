@@ -29,6 +29,27 @@ def sevenpoint(pts1, pts2, M):
     Farray = []
     # ----- TODO -----
     # YOUR CODE HERE
+
+    # (1) Normalize the input pts1 and pts2 scale paramter M.
+        
+
+    # (2) Setup the seven point algorithm's equation.
+
+
+    # (3) Solve for the least square solution using SVD. 
+
+
+    # (4) Pick the last two colum vector of vT.T (the two null space solution f1 and f2)
+
+
+    # (5) Use the singularity constraint to solve for the cubic polynomial equation of  F = a*f1 + (1-a)*f2 that leads to 
+    #     det(F) = 0. Solving this polynomial will give you one or three real solutions of the fundamental matrix. 
+    #     Use np.polynomial.polynomial.polyroots to solve for the roots
+
+
+    # (6) Unscale the fundamental matrixes and return as Farray
+
+
     raise NotImplementedError()
     return Farray
 
