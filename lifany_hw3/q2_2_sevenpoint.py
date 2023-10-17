@@ -79,7 +79,8 @@ def sevenpoint(pts1, pts2, M):
     c3, c2, c1, c0 = res[0], res[1], res[2], res[3]
     roots = np.polynomial.polynomial.polyroots([c3, c2, c1, c0])
     # print("roots", roots)
-    roots = roots[np.invert(np.iscomplex(roots))]
+    idx, = np.where(np.iscomplex(roots) == False)
+    roots = roots[list(idx)]
     #breakpoint()
 
     # (6) Unscale the fundamental matrixes and return as Farray
