@@ -44,7 +44,7 @@ def eightpoint(pts1, pts2, M):
 
     # (3) Solve for the least square solution using SVD. 
     U, Sigma, VT = np.linalg.svd(A)
-    # Take last row of VT in special case of SVD when Ax = 0
+    # Take last row of VT (last column of VT.T) in special case of SVD when Ax = 0
     # Math reference: www.cse.unr.edu/~bebis/CS791E/Notes/SVD.pdf
     F = VT[-1, :].reshape((3, 3))
     print("original F", F)
