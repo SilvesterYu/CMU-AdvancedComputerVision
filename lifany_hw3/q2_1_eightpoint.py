@@ -47,6 +47,7 @@ def eightpoint(pts1, pts2, M):
     # Take last row of VT in special case of SVD when Ax = 0
     # Math reference: www.cse.unr.edu/~bebis/CS791E/Notes/SVD.pdf
     F = VT[-1, :].reshape((3, 3))
+    print("original F", F)
     
 
     # (4) Use the function `_singularize` (provided) to enforce the singularity condition. 
