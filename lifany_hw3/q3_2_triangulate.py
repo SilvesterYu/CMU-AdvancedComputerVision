@@ -53,10 +53,10 @@ def triangulate(C1, pts1, C2, pts2):
         Xi = Xi/Xi[-1]
 
         # (3) Calculate the reprojection error using the calculated 3D points and C1 & C2 (do not forget to convert from 
+        #     homogeneous coordinates to non-homogeneous ones)
         proji1, proji2 = np.matmul(C1, Xi.reshape((4, 1))), np.matmul(C2, Xi.reshape(4, 1))
         proji1, proji2 = (proji1/proji1[-1][0])[:-1], (proji2/proji2[-1][0])[:-1]
 
-        #     homogeneous coordinates to non-homogeneous ones)
         # (4) Keep track of the 3D points and projection error, and continue to next point 
         P[i] = Xi[:-1]
         xiyi1, xiyi2 = pts1[i].reshape(2, 1), pts2[i].reshape(2, 1)
@@ -110,7 +110,7 @@ def findM2(F, pts1, pts2, intrinsics, filename="q3_3.npz"):
             M2 = thisM2
 
     C2 = np.matmul(K2, M2)
-    np.savez("q2_1.npz", M2, C2, P)
+    np.savez("q3_3.npz", M2, C2, P)
 
     return M2, C2, P
 
