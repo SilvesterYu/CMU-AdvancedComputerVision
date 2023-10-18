@@ -19,8 +19,11 @@ def essentialMatrix(F, K1, K2):
     # Replace pass by your implementation
     # ----- TODO -----
     # YOUR CODE HERE
+    E = np.matmul(K2.T, np.matmul(F, K1))
+    E = E/E[-1][-1]
+    print("E", E)
 
-    pass
+    return E
 
 
 if __name__ == "__main__":

@@ -26,7 +26,6 @@ def eightpoint(pts1, pts2, M):
     # Replace pass by your implementation
     # ----- TODO -----
     # YOUR CODE HERE
-
     # (1) Normalize the input pts1 and pts2 using the matrix T.
     N = pts1.shape[0]
     pts11 = np.append(pts1, np.ones((N, 1)), axis=1)
@@ -47,18 +46,16 @@ def eightpoint(pts1, pts2, M):
     # Take last row of VT (last column of VT.T) in special case of SVD when Ax = 0
     # Math reference: www.cse.unr.edu/~bebis/CS791E/Notes/SVD.pdf
     F = VT[-1, :].reshape((3, 3))
-    print("original F", F)
     
-
     # (4) Use the function `_singularize` (provided) to enforce the singularity condition. 
     F = _singularize(F)
-    print("singularize F", F)
 
     # (5) Use the function `refineF` (provided) to refine the computed fundamental matrix. 
     F = refineF(F, npts1[:, :-1], npts2[:, :-1])
     
     # (6) Unscale the fundamental matrix
-    F = np.matmul(T, np.matmul(F, T))/F[-1][-1]
+    F = np.matmul(T, np.matmul(F, T))
+    F = F/F[-1][-1]
     print("F", F)
 
     return F
@@ -72,7 +69,9 @@ if __name__ == "__main__":
     im1 = plt.imread("data/im1.png")
     im2 = plt.imread("data/im2.png")
 
-    F = eightpoint(pts1, pts2, M=np.max([*im1.shape, *im2.shape]))
+    M=np.max([*im1.shape, *im2.shape])
+    F = eightpoint(pts1, pts2, M)
+    np.savez("q2_1.npz", F, M)
 
     # Q2.1
     displayEpipolarF(im1, im2, F)

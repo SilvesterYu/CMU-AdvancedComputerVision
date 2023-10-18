@@ -29,7 +29,6 @@ def sevenpoint(pts1, pts2, M):
     Farray = []
     # ----- TODO -----
     # YOUR CODE HERE
-
     # (1) Normalize the input pts1 and pts2 scale paramter M.
     N = pts1.shape[0]
     pts11 = np.append(pts1, np.ones((N, 1)), axis=1)
@@ -50,38 +49,29 @@ def sevenpoint(pts1, pts2, M):
 
     # (4) Pick the last two colum vector of vT.T (the two null space solution f1 and f2)
     f1 = VT[-1, :].reshape((3, 3))
-    #print("original f1", f1)
     f2 = VT[-2, :].reshape((3, 3))
-    #print("original f2", f2)
 
     # (5) Use the singularity constraint to solve for the cubic polynomial equation of  F = a*f1 + (1-a)*f2 that leads to 
     #     det(F) = 0. Solving this polynomial will give you one or three real solutions of the fundamental matrix. 
     #     Use np.polynomial.polynomial.polyroots to solve for the roots
     def det_func(a):
         return np.linalg.det(a*f1 + (1-a)*f2) 
-    
+
     # solve [c3, c2, c1, c0]] using:
     # [a_0**3, a_0**2, a_0, 1]  [c3  [ f(a0)
     # [a_1**3, a_1**2, a_1, 1] * c2 =  f(a1)
     # [a_2**3, a_2**2, a_2, 1]   c1    f(a2)
     # [a_3**3, a_3**2, a_3, 1]   c0]   f(a3) ]
-
     avals = [0, 1/4, 1/2, 3/4]
     amat = np.zeros((4, 4))
     for i in range(4):
         amat[i] = np.array([avals[i]**3, avals[i]**2, avals[i], 1])
-    # print("amat", amat)
     bmat = np.array([det_func(avals[i]) for i in range(4)]).reshape((4, 1))
     res = np.ravel(np.linalg.solve(amat, bmat))
-    # print("bmat", bmat)
-    # print("res", res)
-    # print("f0", det_func(0))
     c3, c2, c1, c0 = res[0], res[1], res[2], res[3]
     roots = np.polynomial.polynomial.polyroots([c3, c2, c1, c0])
-    # print("roots", roots)
     idx, = np.where(np.iscomplex(roots) == False)
     roots = roots[list(idx)]
-    #breakpoint()
 
     # (6) Unscale the fundamental matrixes and return as Farray
     Farray = []
@@ -89,7 +79,8 @@ def sevenpoint(pts1, pts2, M):
         F = r*f1 + (1-r)*f2
         F = _singularize(F)
         F = refineF(F, npts1[:, :-1], npts2[:, :-1])
-        F = np.matmul(T, np.matmul(F, T))/F[-1][-1]
+        F = np.matmul(T, np.matmul(F, T))
+        F = F/F[-1][-1]
         Farray.append(F)
 
     return Farray
@@ -114,6 +105,8 @@ if __name__ == "__main__":
     print(Farray)
 
     F = Farray[0]
+
+    print("F", F)
 
     np.savez("q2_2.npz", F, M)
 
@@ -151,6 +144,12 @@ if __name__ == "__main__":
     min_idx = np.argmin(np.abs(np.array(ress)))
     F = F_res[min_idx]
     print("Error:", ress[min_idx])
+
+    print("final F", F)
+
+    np.savez("q2_2_final.npz", F, M)
+
+    displayEpipolarF(im1, im2, F)
 
     assert F.shape == (3, 3)
     assert F[2, 2] == 1
