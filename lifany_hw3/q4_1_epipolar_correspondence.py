@@ -96,16 +96,20 @@ def epipolarCorrespondence(im1, im2, F, x1, y1):
     # Replace pass by your implementation
     # ----- TODO -----
     # YOUR CODE HERE
+
+    #### Hyperparameters ####
+    W = 7 # for convenience, define 0.5*window size in number of pixels as W
+    R = 5 # search range, how many multiples of W
+    #########################
+
     # (1) Given input [x1, x2], use the fundamental matrix to recover the corresponding epipolar line on image2
     point1 = np.array([x1, y1, 1])
     epi_coords = np.matmul(F, point1)
-    
     a, b, c = epi_coords[0], epi_coords[1], epi_coords[2]
     print("epipolar line a, b, c coordinates for ax + by + c = 0", a, b, c)
 
     # (2) Search along this line to check nearby pixel intensity (you can define a search window) to  find the best matches
     imW, imH = im1.shape[1], im1.shape[0]
-    W = 5 # for convenience, define 0.5*window size in number of pixels as W
     xstart1, xend1, ystart1, yend1 = x1 - W, x1 + W, y1 - W, y1 + W # check window in x1, y1's surroundings
     window1 = im1[ystart1:yend1, xstart1:xend1] # original window in image 1
     #print("window1", xstart1, xend1, ystart1, yend1, window1.shape, window1)
@@ -118,7 +122,7 @@ def epipolarCorrespondence(im1, im2, F, x1, y1):
             slideX = True
     if slideX:
         # slide along x axis only if the absolute slope is relatively small
-        minX, maxX = max(0, xstart1-W), min(xend1+W, im2.shape[0])
+        minX, maxX = max(0, xstart1-R*W), min(xend1+R*W, im2.shape[0])
         for myX in range(minX, maxX):
             myY = int((-a/b)*myX - c/b)
             if myY > W and myY < imH - W:
@@ -130,7 +134,7 @@ def epipolarCorrespondence(im1, im2, F, x1, y1):
                     x2, y2, minErr = myX, myY, err
     else:
         # or we slide along y axis
-        minY, maxY = max(0, ystart1-W), min(yend1+W, im2.shape[0])
+        minY, maxY = max(0, ystart1-R*W), min(yend1+R*W, im2.shape[0])
         for myY in range(minY, maxY):
             myX = int((-b/a)*myY - c/a)
             if myX > W and myX < imW - W:
@@ -140,6 +144,7 @@ def epipolarCorrespondence(im1, im2, F, x1, y1):
                 err = gaussian_weighing_err(window1, window2)
                 if err < minErr:
                     x2, y2, minErr = myX, myY, err
+                    print("best x2, y2 so far", x2, y2)
     print("im W H", imW, imH)
     return x2, y2
 
