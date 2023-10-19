@@ -103,10 +103,11 @@ def epipolarCorrespondence(im1, im2, F, x1, y1):
     a, b, c = epi_coords[0], epi_coords[1], epi_coords[2]
 
     # (2) Search along this line to check nearby pixel intensity (you can define a search window) to  find the best matches
+    x2, y2, minErr = 0, 0, np.Inf
     xstart1, xend1, ystart1, yend1 = x1 - W, x1 + W, y1 - W, y1 + W # check window in x1, y1's surroundings
+    if xstart1 <= W or xend1 >= imW-W or ystart1 <= W or yend1 >= imH-W:
+        return x1, y1
     window1 = im1[ystart1:yend1, xstart1:xend1] # original window in image 1
-    x2, y2 = 0, 0
-    minErr = np.Inf
     # slide along the correct axis to avoid sliding out if the image and getting zero intensity values
     slideX = False
     if b != 0:
@@ -114,7 +115,7 @@ def epipolarCorrespondence(im1, im2, F, x1, y1):
             slideX = True
     if slideX:
         # slide along x axis only if the absolute slope is relatively small
-        minX, maxX = max(0, int(xstart1-(imW/imH)*R)), min(int(xend1+(imW/imH)*R), im2.shape[0])
+        minX, maxX = max(W+1, int(xstart1-(imW/imH)*R)), min(int(xend1+(imW/imH)*R), imW-W)
         for myX in range(minX, maxX):
             myY = int((-a/b)*myX - c/b)
             if myY > W and myY < imH - W:
@@ -126,7 +127,7 @@ def epipolarCorrespondence(im1, im2, F, x1, y1):
                     x2, y2, minErr = myX, myY, err
     else:
         # or we slide along y axis
-        minY, maxY = max(0, int(ystart1-(imH/imW)*R)), min(int(yend1+(imH/imW)*R), im2.shape[0])
+        minY, maxY = max(W+1, int(ystart1-(imH/imW)*R)), min(int(yend1+(imH/imW)*R), imH-W)
         for myY in range(minY, maxY):
             myX = int((-b/a)*myY - c/a)
             if myX > W and myX < imW - W:
@@ -149,10 +150,7 @@ if __name__ == "__main__":
     im2 = plt.imread("data/im2.png")
 
     F = eightpoint(pts1, pts2, M=np.max([*im1.shape, *im2.shape]))
-    #
-    #displayEpipolarF(im1, im2, F)
-    epipolarCorrespondence(im1, im2, F, 119, 217)
-    #
+
     np.savez("q4_1.npz", F, pts1, pts2)
     epipolarMatchGUI(im1, im2, F)
 
