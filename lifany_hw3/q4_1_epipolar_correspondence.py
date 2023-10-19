@@ -6,7 +6,7 @@ from helper import _epipoles, displayEpipolarF
 from q2_1_eightpoint import eightpoint
 
 # Insert your package here
-
+from scipy.ndimage import gaussian_filter
 
 # Helper functions for this assignment. DO NOT MODIFY!!!
 def epipolarMatchGUI(I1, I2, F):
@@ -86,66 +86,57 @@ Q4.1: 3D visualization of the temple images.
 
 """
 
-# (3) Use guassian weighting to weight the pixel simlairty
-def gaussian_weighing_err(window1, window2):
-    err = np.sum(np.absolute(window1 - window2))
-    print("err", err)
-    return err
-
 def epipolarCorrespondence(im1, im2, F, x1, y1):
     # Replace pass by your implementation
     # ----- TODO -----
     # YOUR CODE HERE
+    imW, imH = im1.shape[1], im1.shape[0]
 
-    #### Hyperparameters ####
+    ######## Hyperparameters ########
     W = 7 # for convenience, define 0.5*window size in number of pixels as W
-    R = 5 # search range, how many multiples of W
-    #########################
+    R = 5*W # search range
+    #################################
 
     # (1) Given input [x1, x2], use the fundamental matrix to recover the corresponding epipolar line on image2
     point1 = np.array([x1, y1, 1])
     epi_coords = np.matmul(F, point1)
     a, b, c = epi_coords[0], epi_coords[1], epi_coords[2]
-    print("epipolar line a, b, c coordinates for ax + by + c = 0", a, b, c)
 
     # (2) Search along this line to check nearby pixel intensity (you can define a search window) to  find the best matches
-    imW, imH = im1.shape[1], im1.shape[0]
     xstart1, xend1, ystart1, yend1 = x1 - W, x1 + W, y1 - W, y1 + W # check window in x1, y1's surroundings
     window1 = im1[ystart1:yend1, xstart1:xend1] # original window in image 1
-    #print("window1", xstart1, xend1, ystart1, yend1, window1.shape, window1)
     x2, y2 = 0, 0
     minErr = np.Inf
     # slide along the correct axis to avoid sliding out if the image and getting zero intensity values
     slideX = False
     if b != 0:
-        if np.absolute(a/b) < 1:
+        if np.absolute(a/b) < imH/imW:
             slideX = True
     if slideX:
         # slide along x axis only if the absolute slope is relatively small
-        minX, maxX = max(0, xstart1-R*W), min(xend1+R*W, im2.shape[0])
+        minX, maxX = max(0, int(xstart1-(imW/imH)*R)), min(int(xend1+(imW/imH)*R), im2.shape[0])
         for myX in range(minX, maxX):
             myY = int((-a/b)*myX - c/b)
             if myY > W and myY < imH - W:
                 xstart2, xend2, ystart2, yend2 = myX - W, myX + W, myY - W, myY + W
                 window2 = im2[ystart2:yend2, xstart2:xend2]
-                #print("window2 ", xstart2, xend2, ystart2, yend2, window2.shape)
-                err = gaussian_weighing_err(window1, window2)
+                # (3) Use guassian weighting to weight the pixel simlairty
+                err = gaussian_filter(np.absolute(window1 - window2), sigma=1).mean()
                 if err < minErr:
                     x2, y2, minErr = myX, myY, err
     else:
         # or we slide along y axis
-        minY, maxY = max(0, ystart1-R*W), min(yend1+R*W, im2.shape[0])
+        minY, maxY = max(0, int(ystart1-(imH/imW)*R)), min(int(yend1+(imH/imW)*R), im2.shape[0])
         for myY in range(minY, maxY):
             myX = int((-b/a)*myY - c/a)
             if myX > W and myX < imW - W:
                 xstart2, xend2, ystart2, yend2 = myX - W, myX + W, myY - W, myY + W
                 window2 = im2[ystart2:yend2, xstart2:xend2]
-                #print("else window2 ", xstart2, xend2, ystart2, yend2, window2.shape, window2)
-                err = gaussian_weighing_err(window1, window2)
+                # (3) Use guassian weighting to weight the pixel simlairty
+                err = gaussian_filter(np.absolute(window1 - window2), sigma=1).mean()
                 if err < minErr:
                     x2, y2, minErr = myX, myY, err
-                    print("best x2, y2 so far", x2, y2)
-    print("im W H", imW, imH)
+
     return x2, y2
 
 
