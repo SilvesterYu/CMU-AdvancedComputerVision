@@ -101,7 +101,8 @@ def findM2(F, pts1, pts2, intrinsics, filename="q3_3.npz"):
     minErr = np.Inf
     
     for i in range(M2s.shape[-1]):
-        thisM2 = M2s[:, :, i]
+        thisM2 = M2s[:, :, 0] # for q4_2
+        # thisM2 = M2s[:, :, i] # for before q4
         C1, C2 = np.matmul(K1, M1), np.matmul(K2, thisM2)
         thisP, thisErr = triangulate(C1, pts1, C2, pts2)
         if thisErr < minErr:
@@ -111,6 +112,7 @@ def findM2(F, pts1, pts2, intrinsics, filename="q3_3.npz"):
 
     C2 = np.matmul(K2, M2)
     np.savez("q3_3.npz", M2, C2, P)
+    print("FindM2 error", minErr)
 
     return M2, C2, P
 
