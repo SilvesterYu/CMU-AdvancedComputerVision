@@ -24,6 +24,11 @@ Q2.2: Seven Point Algorithm for calculating the fundamental matrix
     (6) Unscale the fundamental matrixes and return as Farray
 """
 
+# (5) Use the singularity constraint to solve for the cubic polynomial equation of  F = a*f1 + (1-a)*f2 that leads to 
+#     det(F) = 0. Solving this polynomial will give you one or three real solutions of the fundamental matrix. 
+#     Use np.polynomial.polynomial.polyroots to solve for the roots
+def det_func(a, f1, f2):
+    return np.linalg.det(a*f1 + (1-a)*f2) 
 
 def sevenpoint(pts1, pts2, M):
     Farray = []
@@ -48,14 +53,8 @@ def sevenpoint(pts1, pts2, M):
     U, Sigma, VT = np.linalg.svd(A)  
 
     # (4) Pick the last two colum vector of vT.T (the two null space solution f1 and f2)
-    f1 = VT[-1, :].reshape((3, 3))
-    f2 = VT[-2, :].reshape((3, 3))
-
-    # (5) Use the singularity constraint to solve for the cubic polynomial equation of  F = a*f1 + (1-a)*f2 that leads to 
-    #     det(F) = 0. Solving this polynomial will give you one or three real solutions of the fundamental matrix. 
-    #     Use np.polynomial.polynomial.polyroots to solve for the roots
-    def det_func(a):
-        return np.linalg.det(a*f1 + (1-a)*f2) 
+    f1 = VT[-2, :].reshape((3, 3))
+    f2 = VT[-1, :].reshape((3, 3))
 
     # solve [c3, c2, c1, c0]] using:
     # [a_0**3, a_0**2, a_0, 1]  [c3  [ f(a0)
@@ -66,10 +65,10 @@ def sevenpoint(pts1, pts2, M):
     amat = np.zeros((4, 4))
     for i in range(4):
         amat[i] = np.array([avals[i]**3, avals[i]**2, avals[i], 1])
-    bmat = np.array([det_func(avals[i]) for i in range(4)]).reshape((4, 1))
+    bmat = np.array([det_func(avals[i], f1, f2) for i in range(4)]).reshape((4, 1))
     res = np.ravel(np.linalg.solve(amat, bmat))
     c3, c2, c1, c0 = res[0], res[1], res[2], res[3]
-    roots = np.polynomial.polynomial.polyroots([c3, c2, c1, c0])
+    roots = np.polynomial.polynomial.polyroots([c0, c1, c2, c3])
     idx, = np.where(np.iscomplex(roots) == False)
     roots = roots[list(idx)]
 
@@ -78,11 +77,9 @@ def sevenpoint(pts1, pts2, M):
     for r in roots:
         F = r*f1 + (1-r)*f2
         F = _singularize(F)
-        F = refineF(F, npts1[:, :-1], npts2[:, :-1])
         F = np.matmul(T, np.matmul(F, T))
         F = F/F[-1][-1]
         Farray.append(F)
-
     return Farray
 
 
