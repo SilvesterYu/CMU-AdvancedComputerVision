@@ -9,6 +9,7 @@ from q3_2_triangulate import findM2
 import scipy
 
 # Insert your package here
+import random
 
 
 # Helper functions for this assignment. DO NOT MODIFY!!!
@@ -51,10 +52,25 @@ Q5.1: RANSAC method.
 """
 
 
-def ransacF(pts1, pts2, M, nIters=1000, tol=10):
+def ransacF(pts1, pts2, M, nIters=1000, tol=5):
     # TODO: Replace pass by your implementation
-    pass
-
+    N = pts1.shape[0]
+    x = 8
+    it, maxnumInliers, minErr = 0, 0, np.Inf
+    while it < nIters:
+        idx = random.sample(range(0, N), x)
+        sampled_points1, sampled_points2 = pts1[idx], pts2[idx]
+        myF = eightpoint(sampled_points1, sampled_points2, M)
+        pts1_homo, pts2_homo = np.hstack((pts1, np.ones((N, 1)))), np.hstack((pts2, np.ones((N, 1))))
+        err = calc_epi_error(pts1_homo, pts2_homo, myF)
+        in_idx = np.where(err < tol)[0]
+        numInliers = len(in_idx)
+        if numInliers > maxnumInliers:
+            F, inliers = myF, np.where(err < tol, True, False).reshape((N, 1))
+            minErr, maxnumInliers = err[in_idx].mean(), numInliers, 
+        it += 1
+    print("minErr", minErr, "maxnumInliers", maxnumInliers)
+    return F, inliers
 
 """
 Q5.2: Rodrigues formula.
@@ -62,10 +78,16 @@ Q5.2: Rodrigues formula.
     Output: R, a rotation matrix
 """
 
-
+# reference: https://courses.cs.duke.edu//fall13/compsci527/notes/rodrigues.pdf
 def rodrigues(r):
     # TODO: Replace pass by your implementation
-    pass
+    theta = np.linalg.norm(r)
+    r = r.reshape((3, 1))
+    u = r/theta
+    I = np.array([[1, 0, 0], [0, 1, 0], [0, 0, 1]])
+    ux = np.array([[0, -u[2][0], u[1][0]], [u[2][0], 0, -u[0][0]], [-u[1][0], u[0][0], 0]])
+    R = I * np.cos(theta) + (1 - np.cos(theta)) * np.matmul(u, u.T) + ux * np.sin(theta)
+    return R
 
 
 """
@@ -74,10 +96,30 @@ Q5.2: Inverse Rodrigues formula.
     Output: r, a 3x1 vector
 """
 
-
+# reference: https://courses.cs.duke.edu//fall13/compsci527/notes/rodrigues.pdf
 def invRodrigues(R):
     # TODO: Replace pass by your implementation
-    pass
+    A = 0.5 * (R - R.T)
+    rho = np.array([A[2][1], A[0][2], A[1][0]])
+    s = np.linalg.norm(rho)
+    c = 0.5 * (R[0][0] + R[1][1] + R[2][2] - 1)
+
+    if s == 0 and c == 1:
+        r = np.array([0, 0, 0])
+    elif s == 0 and c == -1:
+        RI = R + np.array([[1, 0, 0], [0, 1, 0], [0, 0, 1]])
+        normL = [np.linalg.norm(RI[:, 0]), np.linalg.norm(RI[:, 1]), np.linalg.norm(RI[:, 2])]
+        idx = normL.index(max(normL))
+        v = RI[:, idx]
+        u = v/np.linalg.norm(v)
+        u = u.reshape((0, 3))
+        r = -u * np.pi
+    else:
+        u = rho / s
+        theta = np.arctan2(s, c)
+        r = u * theta
+
+    return r
 
 
 """
@@ -137,7 +179,13 @@ if __name__ == "__main__":
     im1 = plt.imread("data/im1.png")
     im2 = plt.imread("data/im2.png")
 
+    '''
+
     F, inliers = ransacF(noisy_pts1, noisy_pts2, M=np.max([*im1.shape, *im2.shape]))
+    print("F", F)
+    print("inliers", inliers.sum())
+    print("in", inliers)
+    breakpoint()
 
     # displayEpipolarF(im1, im2, F)
 
@@ -149,6 +197,7 @@ if __name__ == "__main__":
     assert F.shape == (3, 3)
     assert F[2, 2] == 1
     assert np.linalg.matrix_rank(F) == 2
+    '''
 
     # Simple Tests to verify your implementation:
     from scipy.spatial.transform import Rotation as sRot
@@ -172,9 +221,18 @@ if __name__ == "__main__":
     M = np.max([*im1.shape, *im2.shape])
 
     # TODO: YOUR CODE HERE
-    """
-    Call the ransacF function to find the fundamental matrix
-    Call the findM2 function to find the extrinsics of the second camera
-    Call the bundleAdjustment function to optimize the extrinsics and 3D points
-    Plot the 3D points before and after bundle adjustment using the plot_3D_dual function
-    """
+    # (1) Call the ransacF function to find the fundamental matrix
+    F, inliers = ransacF(pts1, pts2, M, nIters = 10)
+    inliers = np.ravel(inliers)
+    in_pts1, in_pts2 = pts1[inliers, :], pts2[inliers, :]
+
+    # (2) Call the findM2 function to find the extrinsics of the second camera
+    M2_init, C2, P_init = findM2(F, in_pts1, in_pts2, intrinsics)
+    print("M2", M2_init)
+
+    # (3) Call the bundleAdjustment function to optimize the extrinsics and 3D points
+    M1 = np.array([[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0]])
+    M2, P, obj_start, obj_end = bundleAdjustment(K1, M1, in_pts1, K2, M2_init, in_pts2, P_init)
+
+    # (4) Plot the 3D points before and after bundle adjustment using the plot_3D_dual function
+    plot_3D_dual(P_init, P)
