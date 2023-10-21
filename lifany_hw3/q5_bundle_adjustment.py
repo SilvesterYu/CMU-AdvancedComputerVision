@@ -216,7 +216,6 @@ if __name__ == "__main__":
     im2 = plt.imread("data/im2.png")
 
     '''
-
     F, inliers = ransacF(noisy_pts1, noisy_pts2, M=np.max([*im1.shape, *im2.shape]))
     print("F", F)
     print("inliers", inliers.sum())
@@ -264,7 +263,7 @@ if __name__ == "__main__":
 
     # (2) Call the findM2 function to find the extrinsics of the second camera
     M2_init, C2, P_init = findM2(F, in_pts1, in_pts2, intrinsics)
-    print("M2", M2_init)
+    print("M2 start", M2_init)
 
     # (3) Call the bundleAdjustment function to optimize the extrinsics and 3D points
     M1 = np.array([[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0]])
@@ -272,7 +271,6 @@ if __name__ == "__main__":
 
     # (4) Plot the 3D points before and after bundle adjustment using the plot_3D_dual function
     plot_3D_dual(P_init, P)
-    print("M2", M2)
-    # print("P", P)
+    print("M2 end", M2)
     print("residual norm start", np.linalg.norm(obj_start)**2)
     print("residual norm end", np.linalg.norm(obj_end)**2)  
