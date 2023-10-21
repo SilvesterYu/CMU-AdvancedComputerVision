@@ -102,14 +102,20 @@ def findM2(F, pts1, pts2, intrinsics, filename="q3_3.npz"):
     
     for i in range(M2s.shape[-1]):
         # thisM2 = M2s[:, :, 0] # for q4_2
-        thisM2 = M2s[:, :, i] # for before q4
+        thisM2 = M2s[:, :, i]
         C1, C2 = np.matmul(K1, M1), np.matmul(K2, thisM2)
         thisP, thisErr = triangulate(C1, pts1, C2, pts2)
-        if thisErr < minErr:
+        # -- for q5
+        thisP2 = np.matmul(thisM2, np.hstack((thisP, np.ones((thisP.shape[0], 1)))).T).T
+        if np.mean(thisP[:, -1]) > 0 and np.mean(thisP2[:, -1]) > 0:        
             minErr = thisErr
             P = thisP
             M2 = thisM2
-
+        # -- (end) for q5
+        # if thisErr < minErr:
+        #     minErr = thisErr
+        #     P = thisP
+        #     M2 = thisM2
     C2 = np.matmul(K2, M2)
     print("FindM2 error", minErr)
 

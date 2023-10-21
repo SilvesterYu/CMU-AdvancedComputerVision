@@ -191,7 +191,7 @@ def bundleAdjustment(K1, M1, p1, K2, M2_init, p2, P_init):
     obj_start = rodriguesResidual(K1, M1, p1, K2, p2, x_init)
 
     # (2) Minimize objective function using scipy.optimize.minimize the rodrigues residual
-    x_op = scipy.optimize.minimize(myFunc, x_init, args=(K1, M1, p1, K2, p2), method="Nelder-Mead").x
+    x_op = scipy.optimize.minimize(myFunc, x_init, args=(K1, M1, p1, K2, p2), method="Powell").x
 
     # (3) Collect the optimized results
     obj_end = rodriguesResidual(K1, M1, p1, K2, p2, x_op)
@@ -257,7 +257,7 @@ if __name__ == "__main__":
 
     # TODO: YOUR CODE HERE
     # (1) Call the ransacF function to find the fundamental matrix
-    F, inliers = ransacF(pts1, pts2, M, nIters = 10)
+    F, inliers = ransacF(pts1, pts2, M)
     inliers = np.ravel(inliers)
     in_pts1, in_pts2 = pts1[inliers, :], pts2[inliers, :]
 
@@ -272,5 +272,5 @@ if __name__ == "__main__":
     # (4) Plot the 3D points before and after bundle adjustment using the plot_3D_dual function
     plot_3D_dual(P_init, P)
     print("M2 end", M2)
-    print("residual norm start", np.linalg.norm(obj_start)**2)
-    print("residual norm end", np.linalg.norm(obj_end)**2)  
+    print("reprojection error start", np.linalg.norm(obj_start)**2)
+    print("reprojection error end", np.linalg.norm(obj_end)**2)  
