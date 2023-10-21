@@ -176,7 +176,8 @@ Q5.3 Bundle adjustment.
 """
 
 def myFunc(x, K1, M1, p1, K2, p2):
-    return np.linalg.norm(rodriguesResidual(K1, M1, p1, K2, p2, x))
+    # objective function, the reprojection error
+    return np.linalg.norm(rodriguesResidual(K1, M1, p1, K2, p2, x))**2
 
 def bundleAdjustment(K1, M1, p1, K2, M2_init, p2, P_init):
     obj_start = obj_end = 0
@@ -272,6 +273,6 @@ if __name__ == "__main__":
     # (4) Plot the 3D points before and after bundle adjustment using the plot_3D_dual function
     plot_3D_dual(P_init, P)
     print("M2", M2)
-    print("P", P)
-    print("residual norm start", np.linalg.norm(obj_start))
-    print("residual norm end", np.linalg.norm(obj_end))  
+    # print("P", P)
+    print("residual norm start", np.linalg.norm(obj_start)**2)
+    print("residual norm end", np.linalg.norm(obj_end)**2)  
