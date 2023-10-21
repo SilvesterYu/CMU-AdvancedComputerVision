@@ -28,8 +28,11 @@ def plot_3D_dual(P_before, P_after):
     ax.scatter(P_before[:, 0], P_before[:, 1], P_before[:, 2], c="blue")
     ax.scatter(P_after[:, 0], P_after[:, 1], P_after[:, 2], c="red")
     while True:
-        x, y = plt.ginput(1, mouse_stop=2)[0]
-        plt.draw()
+        try:
+            x, y = plt.ginput(1, mouse_stop=2)[0]
+            plt.draw()
+        except:
+            break
 
 
 """
@@ -133,27 +136,24 @@ Q5.3: Rodrigues residual.
     Output: residuals, 4N x 1 vector, the difference between original and estimated projections
 """
 
-
 def rodriguesResidual(K1, M1, p1, K2, p2, x):
     # TODO: Replace pass by your implementation
-    # (1) recover M2 from R2, t2 in x
-    t2 = x[-3:]
-    r2 = x[-6:-3]
+    # (1) recover M2 from (R2, t2) in x
+    t2, r2, P = x[-3:], x[-6:-3], x[:-6]
     R2 = rodrigues(r2)
-    P = x[:-6]
     P = P.reshape((int(len(P)/3), 3))
     M2 = np.hstack((R2, t2.reshape((3, 1))))
 
-    # (2) calculate projected points
+    # (2) calculate projected points in both images
     C1 = np.matmul(K1, M1)
     C2 = np.matmul(K2, M2)
-    P_homo = np.hstack((P, np.ones((P.shape[0], 1))))
-    proj1 = np.matmul(C1, P_homo.T).T
+    P_homo = np.hstack((P, np.ones((P.shape[0], 1)))) # N x 4
+    proj1, proj2 = np.matmul(C1, P_homo.T), np.matmul(C2, P_homo.T) # 3 x 4 by 4 x N = 3 x N
+    proj1, proj2 = (proj1/proj1[-1])[:-1].T, (proj2/proj2[-1])[:-1].T # Normalise and reshape into N x 2
 
     # (3) calculate residuals
-
-    TODO
-
+    residual = np.append((p1 - proj1).flatten(), (p2 - proj2).flatten())
+    return residual
 
 
 """
@@ -175,22 +175,30 @@ Q5.3 Bundle adjustment.
         You can try different (method='..') in scipy.optimize.minimize for best results. 
 """
 
+def myFunc(x, K1, M1, p1, K2, p2):
+    return np.linalg.norm(rodriguesResidual(K1, M1, p1, K2, p2, x))
 
 def bundleAdjustment(K1, M1, p1, K2, M2_init, p2, P_init):
     obj_start = obj_end = 0
     # ----- TODO -----
     # YOUR CODE HERE
-    # (1) Calculate residual
-    R2 = M2_init[:, :-1]
-    t2 = M2_init[:, -1]
-    r2 = invRodrigues(R2)
-    x_init = np.append(P_init.flatten(), np.append(r2, t2))
-    residual_init = rodriguesResidual(K1, M1, p1, K2, p2, x_init)
+    # (1) Calculate initial residual
+    R2_init, t2_init = M2_init[:, :-1], M2_init[:, -1]
+    r2_init= invRodrigues(R2_init)
+    x_init = np.append(P_init.flatten(), r2_init)
+    x_init = np.append(x_init, t2_init)
+    obj_start = rodriguesResidual(K1, M1, p1, K2, p2, x_init)
 
-    # (2) Minimize objective function
+    # (2) Minimize objective function using scipy.optimize.minimize the rodrigues residual
+    x_op = scipy.optimize.minimize(myFunc, x_init, args=(K1, M1, p1, K2, p2), method="Nelder-Mead").x
 
+    # (3) Collect the optimized results
+    obj_end = rodriguesResidual(K1, M1, p1, K2, p2, x_op)
+    t2, r2, P = x_op[-3:], x_op[-6:-3], x_op[:-6]
+    R2 = rodrigues(r2)
+    P = P.reshape((int(len(P)/3), 3))
+    M2 = np.hstack((R2, t2.reshape((3, 1))))
 
-    raise NotImplementedError()
     return M2, P, obj_start, obj_end
 
 
@@ -263,3 +271,7 @@ if __name__ == "__main__":
 
     # (4) Plot the 3D points before and after bundle adjustment using the plot_3D_dual function
     plot_3D_dual(P_init, P)
+    print("M2", M2)
+    print("P", P)
+    print("residual norm start", np.linalg.norm(obj_start))
+    print("residual norm end", np.linalg.norm(obj_end))  
