@@ -136,7 +136,24 @@ Q5.3: Rodrigues residual.
 
 def rodriguesResidual(K1, M1, p1, K2, p2, x):
     # TODO: Replace pass by your implementation
-    pass
+    # (1) recover M2 from R2, t2 in x
+    t2 = x[-3:]
+    r2 = x[-6:-3]
+    R2 = rodrigues(r2)
+    P = x[:-6]
+    P = P.reshape((int(len(P)/3), 3))
+    M2 = np.hstack((R2, t2.reshape((3, 1))))
+
+    # (2) calculate projected points
+    C1 = np.matmul(K1, M1)
+    C2 = np.matmul(K2, M2)
+    P_homo = np.hstack((P, np.ones((P.shape[0], 1))))
+    proj1 = np.matmul(C1, P_homo.T).T
+
+    # (3) calculate residuals
+
+    TODO
+
 
 
 """
@@ -163,6 +180,16 @@ def bundleAdjustment(K1, M1, p1, K2, M2_init, p2, P_init):
     obj_start = obj_end = 0
     # ----- TODO -----
     # YOUR CODE HERE
+    # (1) Calculate residual
+    R2 = M2_init[:, :-1]
+    t2 = M2_init[:, -1]
+    r2 = invRodrigues(R2)
+    x_init = np.append(P_init.flatten(), np.append(r2, t2))
+    residual_init = rodriguesResidual(K1, M1, p1, K2, p2, x_init)
+
+    # (2) Minimize objective function
+
+
     raise NotImplementedError()
     return M2, P, obj_start, obj_end
 
