@@ -52,7 +52,7 @@ correct_files = [
 
 correct = True
 for f in correct_files:
-    if os.path.join(andrewid, f) not in filelist and f not in filelist:
+    if os.path.join(andrewid, f).replace("\\","/") not in filelist and f not in filelist:
         print("{} is not found.".format(os.path.join(andrewid, f)))
         correct = False
 
