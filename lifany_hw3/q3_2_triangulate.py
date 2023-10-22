@@ -54,7 +54,7 @@ def triangulate(C1, pts1, C2, pts2):
 
         # (3) Calculate the reprojection error using the calculated 3D points and C1 & C2 (do not forget to convert from 
         #     homogeneous coordinates to non-homogeneous ones)
-        proji1, proji2 = np.matmul(C1, Xi.reshape((4, 1))), np.matmul(C2, Xi.reshape(4, 1))
+        proji1, proji2 = np.matmul(C1, Xi.reshape(4, 1)), np.matmul(C2, Xi.reshape(4, 1))
         proji1, proji2 = (proji1/proji1[-1][0])[:-1], (proji2/proji2[-1][0])[:-1]
 
         # (4) Keep track of the 3D points and projection error, and continue to next point 
