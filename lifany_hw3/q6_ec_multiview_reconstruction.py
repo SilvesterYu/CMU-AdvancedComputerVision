@@ -23,9 +23,63 @@ Modified by Vineet Tambe, 2023.
 """
 
 
-def MultiviewReconstruction(C1, pts1, C2, pts2, C3, pts3, Thres=100):
+def MultiviewReconstruction(C1, pts1, C2, pts2, C3, pts3, Thres=500):
     # TODO: Replace pass by your implementation
-    pass
+    N = pts1.shape[0]
+    P = np.zeros((N, 3))
+    err = 0
+    print("pts1", pts1)
+    print("pts2", pts2)
+    print("pts3", pts3)
+    mask1, mask2, mask3 = np.where(pts1[:, -1]<Thres, 0, 1), np.where(pts2[:, -1]<Thres, 0, 1), np.where(pts3[:, -1]<Thres, 0, 1)
+    in_idx = np.where(mask1 + mask2 + mask3 > 1)[0]
+    print(in_idx)
+    for i in in_idx:
+        xi, yi, p1, p2, p3 = np.array([]), np.array([]), np.array([]), np.array([]), np.array([])
+        if mask1[i] == 1:
+            xi = np.append(xi, pts1[i, 0])
+            yi = TODO
+        if mask2[i] == 1:
+            xi = np.append(xi, pts2[i, 0])
+        if mask3[i] == 1:
+            xi = np.append(xi, pts3[i, 0])
+        print(xi)
+
+    
+
+    '''
+    # (1) For every input point, form A using the corresponding points from pts1 & pts2 and C1 & C2
+    # Math reference: https://www.cs.cmu.edu/~16385/s17/Slides/11.4_Triangulation.pdf
+    p11, p21, p31 = C1[0, :], C1[1, :], C1[2, :]
+    p12, p22, p32 = C2[0, :], C2[1, :], C2[2, :]
+    for i in range(pts1.shape[0]):
+        xi1, yi1, xi2, yi2 = pts1[i][0], pts1[i][1], pts2[i][0], pts2[i][1]
+        Ai = np.array([
+            yi2 * p32 - p22,
+            p12 - xi2 * p32,
+            yi1 * p31 - p21,
+            p11 - xi1 * p31
+        ])
+
+        # (2) Solve for the least square solution using np.linalg.svd
+        U, Sigma, VT = np.linalg.svd(Ai, 0)
+        Xi = VT[-1, :]
+        Xi = Xi/Xi[-1]
+
+        # (3) Calculate the reprojection error using the calculated 3D points and C1 & C2 (do not forget to convert from 
+        #     homogeneous coordinates to non-homogeneous ones)
+        proji1, proji2 = np.matmul(C1, Xi.reshape((4, 1))), np.matmul(C2, Xi.reshape(4, 1))
+        proji1, proji2 = (proji1/proji1[-1][0])[:-1], (proji2/proji2[-1][0])[:-1]
+
+        # (4) Keep track of the 3D points and projection error, and continue to next point 
+        P[i] = Xi[:-1]
+        xiyi1, xiyi2 = pts1[i].reshape(2, 1), pts2[i].reshape(2, 1)
+        err1, err2 = np.linalg.norm(xiyi1 - proji1), np.linalg.norm(xiyi2 - proji2)
+        err += err1**2 + err2**2
+
+    return P, err
+    '''
+    TODO
 
 
 """
@@ -71,3 +125,5 @@ if __name__ == "__main__":
         img = visualize_keypoints(im2, pts2)
 
         # TODO: YOUR CODE HERE
+        C1, C2, C3 = np.matmul(K1, M1), np.matmul(K2, M2), np.matmul(K3, M3)
+        thisP, thisErr = MultiviewReconstruction(C1, pts1, C2, pts2, C3, pts3)
