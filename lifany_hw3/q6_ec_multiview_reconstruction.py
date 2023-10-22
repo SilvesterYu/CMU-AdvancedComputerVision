@@ -32,18 +32,10 @@ def MultiviewReconstruction(C1, pts1, C2, pts2, C3, pts3, Thres=500):
     print("pts2", pts2)
     print("pts3", pts3)
     mask1, mask2, mask3 = np.where(pts1[:, -1]<Thres, 0, 1), np.where(pts2[:, -1]<Thres, 0, 1), np.where(pts3[:, -1]<Thres, 0, 1)
-    in_idx = np.where(mask1 + mask2 + mask3 > 1)[0]
-    print(in_idx)
-    for i in in_idx:
-        xi, yi, p1, p2, p3 = np.array([]), np.array([]), np.array([]), np.array([]), np.array([])
-        if mask1[i] == 1:
-            xi = np.append(xi, pts1[i, 0])
-            yi = TODO
-        if mask2[i] == 1:
-            xi = np.append(xi, pts2[i, 0])
-        if mask3[i] == 1:
-            xi = np.append(xi, pts3[i, 0])
-        print(xi)
+    out_idx = np.where(mask1 + mask2 + mask3 < 1)[0]
+    print(out_idx)
+    for i in out_idx:
+        pass
 
     
 
