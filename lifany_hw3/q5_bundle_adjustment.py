@@ -217,10 +217,22 @@ if __name__ == "__main__":
 
     '''
     F, inliers = ransacF(noisy_pts1, noisy_pts2, M=np.max([*im1.shape, *im2.shape]))
+    inliers = np.ravel(inliers)
     print("F", F)
     print("inliers", inliers.sum())
     print("in", inliers)
+    M = np.max([*im1.shape, *im2.shape])
+    in_pts1, in_pts2 = noisy_pts1[inliers, :], noisy_pts1[inliers, :]
+    F_all = eightpoint(noisy_pts1, noisy_pts2, M)
+    N = noisy_pts1.shape[0]
+    N_in = in_pts1.shape[0]
+    all_pts1_homo, all_pts2_homo = np.hstack((noisy_pts1, np.ones((N, 1)))), np.hstack((noisy_pts2, np.ones((N, 1))))
+    in_pts1_homo, in_pts2_homo = np.hstack((in_pts1, np.ones((N_in, 1)))), np.hstack((in_pts2, np.ones((N_in, 1))))
+    err_all = calc_epi_error(all_pts1_homo, all_pts2_homo, F_all)
+    err_in = calc_epi_error(in_pts1_homo, in_pts2_homo, F_all)
+    print("err all", err_all.mean(), "err_in", err_in.mean())
     breakpoint()
+    '''
 
     # displayEpipolarF(im1, im2, F)
 
@@ -232,7 +244,7 @@ if __name__ == "__main__":
     assert F.shape == (3, 3)
     assert F[2, 2] == 1
     assert np.linalg.matrix_rank(F) == 2
-    '''
+    
 
     # Simple Tests to verify your implementation:
     from scipy.spatial.transform import Rotation as sRot
