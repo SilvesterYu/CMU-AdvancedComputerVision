@@ -216,6 +216,7 @@ if __name__ == "__main__":
     im2 = plt.imread("data/im2.png")
 
     '''
+    # -- UNCOMMENT THIS PART FOR EIGHTPOINT & RANSAC COMPARISON!!
     F, inliers = ransacF(noisy_pts1, noisy_pts2, M=np.max([*im1.shape, *im2.shape]))
     inliers = np.ravel(inliers)
     print("F", F)
