@@ -94,6 +94,15 @@ def compute_loss_and_acc(y, probs):
     ##########################
     ##### your code here #####
     ##########################
+    logprobs = np.log(probs)
+    loss_elements = y * logprobs
+    loss = -np.matrix.sum(loss_elements)
+
+    preds = (probs == probs.max(axis=1)[:,None]).astype(int)
+    diffs = preds - y
+    # count number of zero difference rows (where y == pred)
+    correct_count = np.sum(~diffs.any(1))
+    acc = correct_count / preds.shape[0]
 
     return loss, acc
 
