@@ -16,6 +16,10 @@ def initialize_weights(in_size, out_size, params, name=""):
     ##########################
     ##### your code here #####
     ##########################
+    wmin, wmax = -np.sqrt(6)/(np.sqrt(in_size + out_size)), np.sqrt(6)/(np.sqrt(in_size + out_size))
+    W = np.random.uniform(low=wmin, high=wmax, size=(in_size, out_size))
+    b = np.zeros(out_size)
+    print("W", W)
 
     params["W" + name] = W
     params["b" + name] = b
@@ -30,6 +34,7 @@ def sigmoid(x):
     ##########################
     ##### your code here #####
     ##########################
+    res = 1/(1+np.exp(-x))
 
     return res
 
@@ -53,6 +58,8 @@ def forward(X, params, name="", activation=sigmoid):
     ##########################
     ##### your code here #####
     ##########################
+    pre_act = np.matmul(W, X) + b
+    post_act = activation(pre_act)
 
     # store the pre-activation and post-activation values
     # these will be important in backprop
@@ -70,6 +77,9 @@ def softmax(x):
     ##########################
     ##### your code here #####
     ##########################
+    # reference: https://stackoverflow.com/questions/43290138/softmax-function-of-a-numpy-array-by-row
+    x_c = x - np.max(x, axis=1)[:, np.newaxis]
+    res = np.exp(x_c) / np.sum(np.exp(x_c), axis=1)[:, np.newaxis]
 
     return res
 
