@@ -138,6 +138,7 @@ def backwards(delta, params, name="", activation_deriv=sigmoid_deriv):
     ##########################
     ##### your code here #####
     ##########################
+    
 
     # store the gradients
     params["grad_W" + name] = grad_W
