@@ -138,7 +138,12 @@ def backwards(delta, params, name="", activation_deriv=sigmoid_deriv):
     ##########################
     ##### your code here #####
     ##########################
-    
+    dJdy = activation_deriv(post_act)
+    loss_dJdy = delta * activation_deriv(post_act)
+    grad_W = np.matmul(loss_dJdy, X.T)
+    # -- ???
+    grad_b = np.sum(loss_dJdy, axis=0)/loss_dJdy.shape[0]
+    grad_X = np.matmul(W.T, loss_dJdy)
 
     # store the gradients
     params["grad_W" + name] = grad_W
