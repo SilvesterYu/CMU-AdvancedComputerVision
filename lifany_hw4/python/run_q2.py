@@ -84,6 +84,8 @@ batches = get_random_batches(x, y, 5)
 # print batch sizes
 print([_[0].shape[0] for _ in batches])
 batch_num = len(batches)
+print("here")
+breakpoint()
 
 # WRITE A TRAINING LOOP HERE
 max_iters = 500

@@ -19,7 +19,7 @@ def initialize_weights(in_size, out_size, params, name=""):
     wmin, wmax = -np.sqrt(6)/(np.sqrt(in_size + out_size)), np.sqrt(6)/(np.sqrt(in_size + out_size))
     W = np.random.uniform(low=wmin, high=wmax, size=(in_size, out_size))
     b = np.zeros(out_size)
-    print("W", W)
+    #print("W", W)
 
     params["W" + name] = W
     params["b" + name] = b
@@ -58,7 +58,7 @@ def forward(X, params, name="", activation=sigmoid):
     ##########################
     ##### your code here #####
     ##########################
-    pre_act = np.matmul(W, X) + b
+    pre_act = np.matmul(X, W) + b
     post_act = activation(pre_act)
 
     # store the pre-activation and post-activation values
@@ -159,4 +159,9 @@ def get_random_batches(x, y, batch_size):
     ##########################
     ##### your code here #####
     ##########################
+    assert x.shape[0] % batch_size == 0
+    num_batches = x.shape[0] / batch_size
+    x_split = np.split(x, num_batches)
+    y_split = np.split(y, num_batches)
+    batches = zip(x_split, y_split)
     return batches
