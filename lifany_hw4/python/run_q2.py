@@ -98,20 +98,35 @@ learning_rate = 1e-3
 for itr in range(max_iters):
     total_loss = 0
     avg_acc = 0
+    total_acc = 0
     for xb, yb in batches:
         ##########################
         ##### your code here #####
         ##########################
-        pass
+       
         # forward
+        h1 = forward(xb, params, "layer1")
+        probs = forward(h1, params, "output", softmax)
 
         # loss
         # be sure to add loss and accuracy to epoch totals
+        loss, acc = compute_loss_and_acc(yb, probs)
+        total_loss += loss
+        total_acc += acc
 
         # backward
+        delta1 = probs - yb
+        delta2 = backwards(delta1, params, "output", linear_deriv)
+        grad_xb = backwards(delta2, params, "layer1", sigmoid_deriv)
 
         # apply gradient
         # gradients should be summed over batch samples
+        for k, v in sorted(list(params.items())):
+            if "grad" in k:
+                name = k.split("_")[1]
+                #print(name, v.shape, params[name].shape)
+                params[name] = params[name] - learning_rate*v
+    avg_acc = total_acc / len(batches)
 
     if itr % 100 == 0:
         print(
