@@ -44,15 +44,16 @@ print("{}, {:.2f}".format(params["boutput"].mean(), params["Woutput"].std() ** 2
 # Q 2.2.1
 # implement sigmoid
 test = sigmoid(np.array([-1000, 1000]))
-print("should be zero and one\t", test.min(), test.max())
+print("\nQ2.2.1 should be zero and one\t", test.min(), test.max())
 # implement forward
 h1 = forward(x, params, "layer1")
-print(h1.shape)
+
 # Q 2.2.2
 # implement softmax
 probs = forward(h1, params, "output", softmax)
 # make sure you understand these values!
 # positive, ~1, ~1, (40,4)
+print("\nQ2.2.2 positive, ~1, ~1, (40,4)")
 print(probs.min(), min(probs.sum(1)), max(probs.sum(1)), probs.shape)
 
 # Q 2.2.3
@@ -60,6 +61,7 @@ print(probs.min(), min(probs.sum(1)), max(probs.sum(1)), probs.shape)
 loss, acc = compute_loss_and_acc(y, probs)
 # should be around -np.log(0.25)*40 [~55], and 0.25
 # if it is not, check softmax!
+print("\nQ2.2.3 should be around -np.log(0.25)*40 [~55], and 0.25")
 print("{}, {:.2f}".format(loss, acc))
 
 # here we cheat for you
@@ -74,6 +76,7 @@ delta2 = backwards(delta1, params, "output", linear_deriv)
 backwards(delta2, params, "layer1", sigmoid_deriv)
 
 # W and b should match their gradients sizes
+print("\nW and b should match their gradients sizes")
 for k, v in sorted(list(params.items())):
     if "grad" in k:
         name = k.split("_")[1]
@@ -82,12 +85,13 @@ for k, v in sorted(list(params.items())):
 # Q 2.4
 batches = get_random_batches(x, y, 5)
 # print batch sizes
+print("\nQ2.4 print batch sizes")
 print([_[0].shape[0] for _ in batches])
 batch_num = len(batches)
-print("here")
-breakpoint()
+
 
 # WRITE A TRAINING LOOP HERE
+print("\ntraining loop")
 max_iters = 500
 learning_rate = 1e-3
 # with default settings, you should get loss < 35 and accuracy > 75%
@@ -118,6 +122,7 @@ for itr in range(max_iters):
 
 
 # Q 2.5 should be implemented in this file
+print("\nQ2.5")
 # you can do this before or after training the network.
 
 # compute gradients using forward and backward

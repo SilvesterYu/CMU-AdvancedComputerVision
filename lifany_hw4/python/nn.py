@@ -19,7 +19,6 @@ def initialize_weights(in_size, out_size, params, name=""):
     wmin, wmax = -np.sqrt(6)/(np.sqrt(in_size + out_size)), np.sqrt(6)/(np.sqrt(in_size + out_size))
     W = np.random.uniform(low=wmin, high=wmax, size=(in_size, out_size))
     b = np.zeros(out_size)
-    #print("W", W)
 
     params["W" + name] = W
     params["b" + name] = b
@@ -77,8 +76,8 @@ def softmax(x):
     ##########################
     ##### your code here #####
     ##########################
-    # reference: https://stackoverflow.com/questions/43290138/softmax-function-of-a-numpy-array-by-row
-    x_c = x - np.max(x, axis=1)[:, np.newaxis]
+    # syntax reference: https://stackoverflow.com/questions/43290138/softmax-function-of-a-numpy-array-by-row
+    x_c = x - np.max(x, axis=1)[:, np.newaxis]  
     res = np.exp(x_c) / np.sum(np.exp(x_c), axis=1)[:, np.newaxis]
 
     return res
@@ -96,7 +95,7 @@ def compute_loss_and_acc(y, probs):
     ##########################
     logprobs = np.log(probs)
     loss_elements = y * logprobs
-    loss = -np.matrix.sum(loss_elements)
+    loss = -np.sum(loss_elements)
 
     preds = (probs == probs.max(axis=1)[:,None]).astype(int)
     diffs = preds - y
@@ -140,10 +139,10 @@ def backwards(delta, params, name="", activation_deriv=sigmoid_deriv):
     ##########################
     dJdy = activation_deriv(post_act)
     loss_dJdy = delta * activation_deriv(post_act)
-    grad_W = np.matmul(loss_dJdy, X.T)
-    # -- ???
+    grad_W = np.matmul(X.T, loss_dJdy)
+    # -- take the per-class average of bias
     grad_b = np.sum(loss_dJdy, axis=0)/loss_dJdy.shape[0]
-    grad_X = np.matmul(W.T, loss_dJdy)
+    grad_X = np.matmul(loss_dJdy, W.T)
 
     # store the gradients
     params["grad_W" + name] = grad_W
@@ -163,5 +162,5 @@ def get_random_batches(x, y, batch_size):
     num_batches = x.shape[0] / batch_size
     x_split = np.split(x, num_batches)
     y_split = np.split(y, num_batches)
-    batches = zip(x_split, y_split)
+    batches = list(zip(x_split, y_split))
     return batches
