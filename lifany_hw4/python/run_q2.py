@@ -91,7 +91,7 @@ batch_num = len(batches)
 
 
 # WRITE A TRAINING LOOP HERE
-print("\ntraining loop")
+print("\ntraining loop with default settings, you should get loss < 35 and accuracy > 75%")
 max_iters = 500
 learning_rate = 1e-3
 # with default settings, you should get loss < 35 and accuracy > 75%
