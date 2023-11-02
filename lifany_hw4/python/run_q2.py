@@ -207,11 +207,7 @@ for k, v in params.items():
             params[k][i] = params[k][i] + eps
 
             central_diff = ((loss1 - loss2) / (2*eps)) / x.shape[0]
-            print(k, "before", params["grad_" + k][i])
             params["grad_" + k][i] = central_diff
-            print(k, "after", params["grad_" + k][i])
-
-print(params.keys())
 
 
 total_error = 0
