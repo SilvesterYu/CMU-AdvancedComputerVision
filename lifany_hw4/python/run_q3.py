@@ -23,7 +23,7 @@ if False:  # view the data
 max_iters = 100
 # pick a batch size, learning rate
 batch_size = 64
-learning_rate = 2e-4
+learning_rate = 2e-3
 hidden_size = 64
 ##########################
 ##### your code here #####

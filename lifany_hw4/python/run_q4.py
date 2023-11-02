@@ -26,6 +26,8 @@ for img in os.listdir("../images"):
     im1 = skimage.img_as_float(skimage.io.imread(os.path.join("../images", img)))
     bboxes, bw = findLetters(im1)
 
+    breakpoint()
+
     plt.imshow(bw)
     for bbox in bboxes:
         minr, minc, maxr, maxc = bbox
