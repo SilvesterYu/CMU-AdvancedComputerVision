@@ -158,6 +158,7 @@ eps = 1e-6
 for k, v in params.items():
     if "_" in k:
         continue
+        
     # for each value inside the parameter
     #   add epsilon
     #   run the network
@@ -171,6 +172,47 @@ for k, v in params.items():
     ##########################
     ##### your code here #####
     ##########################
+    # method reference: https://towardsdatascience.com/coding-neural-network-gradient-checking-5222544ccc64    print("k dim", k, params[k].shape[1])
+
+    this_shape = params[k].shape
+    if len(this_shape) == 2:
+        for i in range(this_shape[0]):
+            for j in range(this_shape[1]):
+                params[k][i][j] = params[k][i][j] + eps
+                h1 = forward(x, params, "layer1")
+                probs1 = forward(h1, params, "output", softmax)
+                loss1, acc1 = compute_loss_and_acc(y, probs1)
+
+                params[k][i][j] = params[k][i][j] - 2*eps
+                h1 = forward(x, params, "layer1")
+                probs2 = forward(h1, params, "output", softmax)
+                loss2, acc2 = compute_loss_and_acc(y, probs2)
+
+                params[k][i][j] = params[k][i][j] + eps
+
+                central_diff = (loss1 - loss2) / (2*eps)
+                params["grad_" + k][i][j] = central_diff
+    else:
+        for i in range(this_shape[0]):
+            params[k][i] = params[k][i] + eps
+            h1 = forward(x, params, "layer1")
+            probs1 = forward(h1, params, "output", softmax)
+            loss1, acc1 = compute_loss_and_acc(y, probs1)
+
+            params[k][i] = params[k][i] - 2*eps
+            h1 = forward(x, params, "layer1")
+            probs2 = forward(h1, params, "output", softmax)
+            loss2, acc2 = compute_loss_and_acc(y, probs2)
+
+            params[k][i] = params[k][i] + eps
+
+            central_diff = ((loss1 - loss2) / (2*eps)) / x.shape[0]
+            print(k, "before", params["grad_" + k][i])
+            params["grad_" + k][i] = central_diff
+            print(k, "after", params["grad_" + k][i])
+
+print(params.keys())
+
 
 total_error = 0
 for k in params.keys():

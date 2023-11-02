@@ -163,4 +163,5 @@ def get_random_batches(x, y, batch_size):
     x_split = np.split(x, num_batches)
     y_split = np.split(y, num_batches)
     batches = list(zip(x_split, y_split))
+
     return batches

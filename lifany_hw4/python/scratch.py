@@ -30,3 +30,17 @@ b = np.array([5, 6, 7])
 pre_act = np.matmul(X, W) + b
 print("XW", np.matmul(X, W))
 print("pre", pre_act)
+
+print("+++++")
+test = np.array([[1, 2, 3, 4],
+[5, 6, 7, 8],
+[9, 10, 11, 12]])
+thisshape = test.shape
+test = test.flatten()
+
+print(test)
+print(len(test.shape))
+test = test.reshape(thisshape)
+print(test)
+print(len(test.shape))
+
