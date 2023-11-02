@@ -22,8 +22,8 @@ if False:  # view the data
 
 max_iters = 100
 # pick a batch size, learning rate
-batch_size = 5
-learning_rate = 1e-3
+batch_size = 64
+learning_rate = 2e-3
 hidden_size = 64
 ##########################
 ##### your code here #####
@@ -66,7 +66,7 @@ for itr in range(max_iters):
         ##### your code here #####
         ##########################
         # forward
-        h1 = forward(xb, params, "layer1", sigmoid)
+        h1 = forward(xb, params, "layer1")
         probs = forward(h1, params, "output", softmax)
 
         # loss

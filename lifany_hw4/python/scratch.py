@@ -30,6 +30,7 @@ b = np.array([5, 6, 7])
 pre_act = np.matmul(X, W) + b
 print("XW", np.matmul(X, W))
 print("pre", pre_act)
+print("split x", np.split(X, 3))
 
 print("+++++")
 test = np.array([[1, 2, 3, 4],

@@ -142,6 +142,7 @@ def backwards(delta, params, name="", activation_deriv=sigmoid_deriv):
     grad_W = np.matmul(X.T, loss_dJdy)
     # -- take the per-class average of bias
     grad_b = np.sum(loss_dJdy, axis=0)/loss_dJdy.shape[0]
+    # grad_b = np.sum(loss_dJdy, axis=0)
     grad_X = np.matmul(loss_dJdy, W.T)
 
     # store the gradients
@@ -158,7 +159,11 @@ def get_random_batches(x, y, batch_size):
     ##########################
     ##### your code here #####
     ##########################
-    assert x.shape[0] % batch_size == 0
+    assert x.shape[0] == y.shape[0]
+    np.random.seed(3)
+    random_idx = np.arange(x.shape[0])
+    np.random.shuffle(random_idx)
+    x, y = x[random_idx, :], y[random_idx, :]
     num_batches = x.shape[0] / batch_size
     x_split = np.split(x, num_batches)
     y_split = np.split(y, num_batches)
