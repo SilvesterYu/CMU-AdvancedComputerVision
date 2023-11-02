@@ -178,21 +178,17 @@ confusion_matrix = np.zeros((train_y.shape[1], train_y.shape[1]))
 ##########################
 ##### your code here #####
 ##########################
-# code reference: 
-def comp_confmat(actual, predicted):
-    # extract the different classes
-    classes = actual.shape[1]
-    # initialize the confusion matrix
-    confmat = np.zeros((classes, classes))
-    # loop across the different combinations of actual / predicted classes
-    for i in range(classes):
-        for j in range(classes):
-           # count the number of instances in each combination of actual / predicted classes
-           confmat[i, j] = np.sum((actual == classes[i]) & (predicted == classes[j]))
-    return confmat
+def confusion_mat(true, pred):
+  k = true.shape[1]
+  result = np.zeros((k, k))
+  for i in range(true.shape[0]):
+    itrue = true[i].argmax()
+    ipred = pred[i].argmax()
+    result[itrue][ipred] += 1
+  return result
 
 train_preds = (train_probs == train_probs.max(axis=1)[:,None]).astype(int)
-confusion_matrix = comp_confmat(train_y, train_preds)
+confusion_matrix = confusion_mat(train_y, train_preds)
 
 
 import string
