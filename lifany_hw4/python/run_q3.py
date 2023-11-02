@@ -98,8 +98,8 @@ for itr in range(max_iters):
 
 # record final training and validation accuracy and loss
 h1 = forward(train_x, params, "layer1")
-probs = forward(h1, params, "output", softmax)
-loss, acc = compute_loss_and_acc(train_y, probs)
+train_probs = forward(h1, params, "output", softmax)
+loss, acc = compute_loss_and_acc(train_y, train_probs)
 train_loss.append(loss / train_x.shape[0])
 train_acc.append(acc)
 h1 = forward(valid_x, params, "layer1")
@@ -178,6 +178,21 @@ confusion_matrix = np.zeros((train_y.shape[1], train_y.shape[1]))
 ##########################
 ##### your code here #####
 ##########################
+# code reference: 
+def comp_confmat(actual, predicted):
+    # extract the different classes
+    classes = actual.shape[1]
+    # initialize the confusion matrix
+    confmat = np.zeros((classes, classes))
+    # loop across the different combinations of actual / predicted classes
+    for i in range(classes):
+        for j in range(classes):
+           # count the number of instances in each combination of actual / predicted classes
+           confmat[i, j] = np.sum((actual == classes[i]) & (predicted == classes[j]))
+    return confmat
+
+train_preds = (train_probs == train_probs.max(axis=1)[:,None]).astype(int)
+confusion_matrix = comp_confmat(train_y, train_preds)
 
 
 import string
