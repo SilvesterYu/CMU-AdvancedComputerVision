@@ -105,7 +105,7 @@ for itr in range(max_iters):
         ##########################
        
         # forward
-        h1 = forward(xb, params, "layer1")
+        h1 = forward(xb, params, "layer1", sigmoid)
         probs = forward(h1, params, "output", softmax)
 
         # loss
