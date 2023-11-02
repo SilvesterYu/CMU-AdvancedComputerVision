@@ -172,7 +172,7 @@ for k, v in params.items():
     ##########################
     ##### your code here #####
     ##########################
-    # method reference: https://towardsdatascience.com/coding-neural-network-gradient-checking-5222544ccc64    print("k dim", k, params[k].shape[1])
+    # code reference: https://towardsdatascience.com/coding-neural-network-gradient-checking-5222544ccc64    print("k dim", k, params[k].shape[1])
 
     this_shape = params[k].shape
     if len(this_shape) == 2:
