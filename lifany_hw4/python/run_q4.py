@@ -43,6 +43,26 @@ for img in os.listdir("../images"):
     ##########################
     ##### your code here #####
     ##########################
+    # list of center points
+    points = [(bbox[0] + bbox[2])/2 for bbox in bboxes]
+    print(points)
+    lines = []
+    eps = 0.2
+    points_sorted = sorted(points)
+    sort_index = np.argsort(points)
+    curr_point = points_sorted[0]
+    curr_cluster = [sort_index[0]]
+    for i in range(1, len(points_sorted)):
+        point = points_sorted[i]
+        if point <= curr_point + eps:
+            curr_cluster.append(sort_index[i])
+        else:
+            lines.append(curr_cluster)
+            curr_cluster = [sort_index[i]]
+        curr_point = point
+    lines.append(curr_cluster)
+    print(lines)
+
 
     # crop the bounding boxes
     # note.. before you flatten, transpose the image (that's how the dataset is!)

@@ -30,7 +30,7 @@ b = np.array([5, 6, 7])
 pre_act = np.matmul(X, W) + b
 print("XW", np.matmul(X, W))
 print("pre", pre_act)
-print("split x", np.split(X, 3))
+print("split x", np.split(X, 2))
 
 print("+++++")
 test = np.array([[1, 2, 3, 4],
@@ -44,4 +44,22 @@ print(len(test.shape))
 test = test.reshape(thisshape)
 print(test)
 print(len(test.shape))
+
+points = [0.1, 0.31,  0.32, 0.45, 0.35, 0.40, 0.5 ]
+
+clusters = []
+eps = 0.2
+points_sorted = sorted(points)
+sort_index = numpy.argsort(points)
+curr_point = points_sorted[0]
+curr_cluster = [curr_point]
+for point in points_sorted[1:]:
+    if point <= curr_point + eps:
+        curr_cluster.append(point)
+    else:
+        clusters.append(curr_cluster)
+        curr_cluster = [point]
+    curr_point = point
+clusters.append(curr_cluster)
+print(clusters)
 

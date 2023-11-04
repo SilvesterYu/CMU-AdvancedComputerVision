@@ -14,7 +14,7 @@ from skimage import data
 from skimage.filters import threshold_otsu
 from skimage.segmentation import clear_border
 from skimage.measure import label, regionprops
-from skimage.morphology import closing, square, area_opening, binary_closing
+from skimage.morphology import closing, square, area_opening, binary_closing, dilation
 from skimage.color import label2rgb
 
 
@@ -30,7 +30,7 @@ def findLetters(image):
     ##########################
     ##### your code here #####
     ##########################
-    # reference: https://scikit-image.org/docs/dev/auto_examples/segmentation/plot_label.html
+    # code reference: https://scikit-image.org/docs/dev/auto_examples/segmentation/plot_label.html
     sigma_est = skimage.restoration.estimate_sigma(image, channel_axis=-1, average_sigmas=True)
     print("image noise", sigma_est)
     denoised_image = skimage.restoration.denoise_bilateral(image, channel_axis=-1)
@@ -38,19 +38,19 @@ def findLetters(image):
 
     thresh = threshold_otsu(grey_image)
     bw = binary_closing(grey_image < thresh, square(3))
+    # dilation to prevent strokes marked as a letter
+    d = np.ones((9,9)) # -row -column
+    dilated_bw = dilation(bw, d)
     # remove artifacts connected to image border
-    cleared = clear_border(bw)
+    cleared = clear_border(dilated_bw)
     # label image regions
     label_image = label(cleared)
 
     for region in skimage.measure.regionprops(label_image):
         # take regions with large enough areas
-        print("region area", region.area)
-        if region.area >= 400 and region.area < 20000:
+        if region.area >=350:
             # draw rectangle
-            print("bbox", region.bbox)
             minr, minc, maxr, maxc = region.bbox
-            print("locs", minr, minc, maxr, maxc)
             bboxes.append([minr, minc, maxr, maxc])
 
     return bboxes, bw
