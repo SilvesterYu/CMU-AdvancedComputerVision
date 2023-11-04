@@ -47,7 +47,7 @@ for img in os.listdir("../images"):
     points = [(bbox[0] + bbox[2])/2 for bbox in bboxes]
     print(points)
     lines = []
-    eps = 0.2
+    eps = 30
     points_sorted = sorted(points)
     sort_index = np.argsort(points)
     curr_point = points_sorted[0]
