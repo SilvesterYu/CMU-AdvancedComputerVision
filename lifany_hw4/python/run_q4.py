@@ -63,7 +63,6 @@ for img in os.listdir("../images"):
     lines.append(curr_cluster)
     print(lines)
 
-
     # crop the bounding boxes
     # note.. before you flatten, transpose the image (that's how the dataset is!)
     # consider doing a square crop, and even using np.pad() to get your images looking more like the dataset
