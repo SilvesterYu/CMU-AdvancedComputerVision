@@ -10,6 +10,12 @@ import skimage.segmentation
 
 from skimage.io import imsave
 import matplotlib.pyplot as plt
+from skimage import data
+from skimage.filters import threshold_otsu
+from skimage.segmentation import clear_border
+from skimage.measure import label, regionprops
+from skimage.morphology import closing, square, area_opening, binary_closing
+from skimage.color import label2rgb
 
 
 # takes a color image
@@ -29,27 +35,22 @@ def findLetters(image):
     print("image noise", sigma_est)
     denoised_image = skimage.restoration.denoise_bilateral(image, channel_axis=-1)
     grey_image = skimage.color.rgb2gray(denoised_image)
-    thresh = skimage.filters.threshold_otsu(grey_image)
-    print("denoised image", denoised_image.shape)
-    bw = skimage.morphology.closing(grey_image > thresh, skimage.morphology.square(3))
-    imsave("bw.png", bw)
-    print("bw", bw.shape)
-    # cleared = skimage.segmentation.clear_border(bw)
-    # imsave("bwcleared.png", cleared)
-    label_image = skimage.measure.label(bw)
-    # image_label_overlay = skimage.color.label2rgb(label_image, image=image, bg_label=0)
-    # fig, ax = plt.subplots(figsize=(10, 6))
-    # ax.imshow(image_label_overlay)
-    # breakpoint()
+
+    thresh = threshold_otsu(grey_image)
+    bw = binary_closing(grey_image < thresh, square(3))
+    # remove artifacts connected to image border
+    cleared = clear_border(bw)
+    # label image regions
+    label_image = label(cleared)
+
     for region in skimage.measure.regionprops(label_image):
         # take regions with large enough areas
         print("region area", region.area)
-        if region.area >= 100:
+        if region.area >= 400 and region.area < 20000:
             # draw rectangle
             print("bbox", region.bbox)
             minr, minc, maxr, maxc = region.bbox
             print("locs", minr, minc, maxr, maxc)
-            bboxes.append([minc, minr, maxc, maxr])
-    print(bboxes)
+            bboxes.append([minr, minc, maxr, maxc])
 
     return bboxes, bw
