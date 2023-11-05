@@ -16,7 +16,7 @@ valid_x = valid_data['valid_data']
 max_iters = 100
 # pick a batch size, learning rate
 batch_size = 36 
-learning_rate =  3e-5
+learning_rate =  1e-3
 hidden_size = 32
 lr_rate = 20
 batches = get_random_batches(train_x,np.ones((train_x.shape[0],1)),batch_size)
