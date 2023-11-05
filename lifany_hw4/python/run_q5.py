@@ -15,8 +15,8 @@ valid_x = valid_data['valid_data']
 
 max_iters = 100
 # pick a batch size, learning rate
-batch_size = 36 
-learning_rate =  1e-3
+batch_size = 128
+learning_rate =  1e-2
 hidden_size = 32
 lr_rate = 20
 batches = get_random_batches(train_x,np.ones((train_x.shape[0],1)),batch_size)
@@ -29,12 +29,11 @@ params = Counter()
 ##########################
 ##### your code here #####
 ##########################
-params = {}
 initialize_weights(train_x.shape[1], hidden_size, params, "layer1")
 initialize_weights(hidden_size, hidden_size, params, "layer2")
 initialize_weights(hidden_size, hidden_size, params, "layer3")
 initialize_weights(hidden_size, train_x.shape[1], params, "output")
-params = Counter(params)
+
 for key, value in params.items():
     print(key, value)
 print("--")
@@ -57,12 +56,11 @@ for itr in range(max_iters):
         ##########################
         ##### your code here #####
         ##########################
-
         # forward pass
         h1 = forward(xb, params, "layer1", relu)
         h2 = forward(h1, params, "layer2", relu)
         h3 = forward(h2, params, "layer3", relu)
-        output_img = forward(h3, params, "output", softmax)
+        output_img = forward(h3, params, "output", sigmoid)
 
         # loss
         loss = np.sum((output_img - xb)**2)
@@ -70,8 +68,8 @@ for itr in range(max_iters):
 
         # backward
         delta1 = 2*output_img - 2*xb
-        delta2 = backwards(delta1, params, "output", linear_deriv)
-        delta3 = backwards(delta2, params, "layer3", sigmoid_deriv)
+        delta2 = backwards(delta1, params, "output", sigmoid_deriv)
+        delta3 = backwards(delta2, params, "layer3", relu_deriv)
         delta4 = backwards(delta3, params, "layer2", relu_deriv)
         grad_xb = backwards(delta4, params, "layer1", relu_deriv)
 
@@ -79,11 +77,15 @@ for itr in range(max_iters):
         for k, v in sorted(list(params.items())):
             if "grad" in k:
                 name = k.split("_")[1]
-                #print(name, v.shape, params[name].shape)
-                params[name] = params[name] - learning_rate*v
+                if "W" in name:
+                    Mw = params["m_" + name]
+                    Mw = 0.9 * Mw - learning_rate * v
+                    params[name] = params[name] + Mw
+                else:
+                    params[name] = params[name] - learning_rate * v
 
     losses.append(total_loss/train_x.shape[0])
-    if itr % 10 == 0:
+    if itr % 2 == 0:
         print("itr: {:02d} \t loss: {:.2f}".format(itr,total_loss))
     if itr % lr_rate == lr_rate-1:
         learning_rate *= 0.9

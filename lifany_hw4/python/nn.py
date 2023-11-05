@@ -23,6 +23,9 @@ def initialize_weights(in_size, out_size, params, name=""):
     params["W" + name] = W
     params["b" + name] = b
 
+    # -- for question 5
+    params["m_" + name] = np.zeros((in_size, out_size))
+
 
 ############################## Q 2.2.1 ##############################
 # x is a matrix
@@ -137,11 +140,12 @@ def backwards(delta, params, name="", activation_deriv=sigmoid_deriv):
     ##########################
     ##### your code here #####
     ##########################
+    N = X.shape[0]
     dJdy = activation_deriv(post_act)
     loss_dJdy = delta * activation_deriv(post_act)
-    grad_W = np.matmul(X.T, loss_dJdy)
+    grad_W = np.matmul(X.T, loss_dJdy)/N
     # -- take the per-class average of bias
-    grad_b = np.sum(loss_dJdy, axis=0)
+    grad_b = np.sum(loss_dJdy, axis=0)/N
     # grad_b = np.sum(loss_dJdy, axis=0)
     grad_X = np.matmul(loss_dJdy, W.T)
 
@@ -149,6 +153,7 @@ def backwards(delta, params, name="", activation_deriv=sigmoid_deriv):
     params["grad_W" + name] = grad_W
     params["grad_b" + name] = grad_b
     return grad_X
+   
 
 
 ############################## Q 2.4 ##############################
