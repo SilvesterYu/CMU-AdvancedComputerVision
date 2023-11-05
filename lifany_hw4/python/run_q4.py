@@ -24,22 +24,11 @@ from skimage.transform import resize
 
 # --
 hidden_size = 64
-
-letters = [i for i in 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789']
-indices = [i for i in range(36)]
-D = dict(zip(letters, indices))
-print(D)
+new_max, new_min = 0.94, 0.3
 t1 = 'TODOLIST1MAKEATODOLIST2CHECKOFFTHEFIRSTTHINGONTODOLIST3REALIZEYOUHAVEALREADYCOMPLETED2THINGS4REWARDYOURSELFWITHANAP'
-t2 = ''
-t3 = ''
-t4 = ''
-myY1 = np.zeros((len(t1), 36))
-for i in range(len(t1)):
-    myY1[i][D[t1[i]]] = 1
-myY2 = ''
-myY3 = ''
-myY4 = ''
-
+t2 = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890'
+t3 = 'HAIKUSAREEASYBUTSOMETIMESTHEYDONTMAKESENSEREFRIGERATOR'
+t4 = 'DEEPLEARNINGDEEPERLEARNINGDEEPESTLEARNING'
 # --
 
 warnings.simplefilter(action="ignore", category=FutureWarning)
@@ -106,10 +95,16 @@ for img in os.listdir("../images"):
             y1, x1, y2, x2 = bbox[0], bbox[1], bbox[2], bbox[3]
             im = bw[y1:y2, x1:x2]
             resized_im = resize(im, (32, 32))
-            # plt.imshow(resized_im)
+            d = np.ones((4,4))
+            dilated_im = erosion(resized_im, d)
+            # plt.imshow(dilated_im)
             # plt.show()
-            resized_im = resized_im.T
-            myX[xidx] = resized_im.reshape(1, 1024)
+            resized_im = dilated_im.T.reshape(1, 1024)
+            minimum, maximum = np.min(resized_im), np.max(resized_im)
+            m = (new_max - new_min) / (maximum - minimum)
+            b = new_min - m * minimum
+            resized_im = m * resized_im + b
+            myX[xidx][:] = resized_im
             xidx += 1
     print(myX)
 
@@ -121,20 +116,44 @@ for img in os.listdir("../images"):
     letters = np.array(
         [_ for _ in string.ascii_uppercase[:26]] + [str(_) for _ in range(10)]
     )
+    print("letters", letters)
     params = pickle.load(open("q3_weights.pickle", "rb"))
     ##########################
     ##### your code here #####
     ##########################
+    indices = [i for i in range(36)]
+    D = dict(zip(letters, indices))
+    print(D)
     if "01" in img:
-        myY = myY1
+        myt = t1
+    elif "02" in img:
+        myt = t2
+    elif "03" in img:
+        myt = t3
+    elif "04" in img:
+        myt = t4
+    myY = np.zeros((len(myt), 36))
+    for i in range(len(myt)):
+        myY[i][D[myt[i]]] = 1
+    
+    # print(myY)
+    # print(myX)
+    # print(myX[0])
+    # im = myX[0].reshape(32, 32).T
+    # print(im)
+    # # plt.imsave("imMy.png", im)
+    # print(myY)
+    # breakpoint()
     # initialize layers
-    initialize_weights(myX.shape[1], hidden_size, params, "layer1")
-    initialize_weights(hidden_size, myY.shape[1], params, "output")
+    # initialize_weights(myX.shape[1], hidden_size, params, "layer1")
+    # initialize_weights(hidden_size, myY.shape[1], params, "output")
 
     h1 = forward(myX, params, "layer1")
     probs = forward(h1, params, "output", softmax)
     loss, acc = compute_loss_and_acc(myY, probs)
     print("loss", loss, "acc", acc)
+    for idx in range(myY.shape[0]):
+        print("Y", myY[idx].argmax(), probs[idx].argmax())
 
 
 

@@ -14,6 +14,10 @@ train_x, train_y = train_data["train_data"], train_data["train_labels"]
 valid_x, valid_y = valid_data["valid_data"], valid_data["valid_labels"]
 test_x, test_y = test_data["test_data"], test_data["test_labels"]
 
+# im = train_x[0].reshape(32, 32).T
+# print(im)
+# plt.imsave("im.png", im)
+# breakpoint()
 if False:  # view the data
     np.random.shuffle(train_x)
     for crop in train_x:

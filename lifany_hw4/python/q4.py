@@ -14,7 +14,7 @@ from skimage import data
 from skimage.filters import threshold_otsu
 from skimage.segmentation import clear_border
 from skimage.measure import label, regionprops
-from skimage.morphology import closing, square, area_opening, binary_closing, dilation
+from skimage.morphology import closing, square, area_opening, binary_closing, dilation, erosion
 from skimage.color import label2rgb
 
 
