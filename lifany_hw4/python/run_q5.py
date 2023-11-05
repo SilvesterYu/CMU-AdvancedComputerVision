@@ -5,6 +5,7 @@ from collections import Counter
 import matplotlib.pyplot as plt
 from mpl_toolkits.axes_grid1 import ImageGrid
 import string
+import pickle
 
 train_data = scipy.io.loadmat('../data/nist36_train.mat')
 valid_data = scipy.io.loadmat('../data/nist36_valid.mat')
@@ -17,6 +18,8 @@ max_iters = 100
 # pick a batch size, learning rate
 batch_size = 128
 learning_rate =  1e-2
+# batch_size = 36
+# learning_rate =  3e-5
 hidden_size = 32
 lr_rate = 20
 batches = get_random_batches(train_x,np.ones((train_x.shape[0],1)),batch_size)
@@ -99,7 +102,13 @@ plt.ylim(0, None)
 plt.grid()
 plt.show()
 
-        
+# --
+# save the final network
+saved_params = {k: v for k, v in params.items() if "_" not in k}
+with open("q5_weights.pickle", "wb") as handle:
+    pickle.dump(saved_params, handle, protocol=pickle.HIGHEST_PROTOCOL)
+# --
+
 # Q5.3.1
 # choose 5 labels (change if you want)
 visualize_labels = ["A", "B", "C", "1", "2"]
@@ -116,8 +125,11 @@ for i, label in enumerate(visualize_labels):
 ##########################
 ##### your code here #####
 ##########################
-
-
+params = pickle.load(open("q5_weights.pickle", "rb"))
+h1 = forward(visualize_x, params, "layer1", relu)
+h2 = forward(h1, params, "layer2", relu)
+h3 = forward(h2, params, "layer3", relu)
+reconstructed_x = forward(h3, params, "output", sigmoid)
 
 # visualize
 fig = plt.figure()
@@ -138,3 +150,11 @@ from skimage.metrics import peak_signal_noise_ratio
 ##########################
 ##### your code here #####
 ##########################
+res = 0
+n = reconstructed_x.shape[0]
+for i in range(n):
+    im_true = visualize_x[i]
+    im_test = reconstructed_x[i]
+    res += peak_signal_noise_ratio(im_true, im_test)
+res = res / n
+print("PSNR: ", res)
