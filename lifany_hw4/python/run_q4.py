@@ -98,9 +98,9 @@ for img in os.listdir("../images"):
             d = np.ones((9, 9))
             dilated_im = erosion(im, d)
             resized_im = resize(dilated_im, (32, 32))
-            if "02" in img:
-                plt.imshow(resized_im)
-                plt.show()
+            # if "02" in img:
+            #     plt.imshow(resized_im)
+            #     plt.show()
             resized_im = resized_im.T.reshape(1, 1024)
             minimum, maximum = np.min(resized_im), np.max(resized_im)
             m = (new_max - new_min) / (maximum - minimum)
