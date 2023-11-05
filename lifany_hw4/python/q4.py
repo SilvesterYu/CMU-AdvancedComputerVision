@@ -53,4 +53,4 @@ def findLetters(image):
             minr, minc, maxr, maxc = region.bbox
             bboxes.append([minr, minc, maxr, maxc])
 
-    return bboxes, bw
+    return bboxes, grey_image

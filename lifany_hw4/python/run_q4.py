@@ -20,6 +20,7 @@ from q4 import *
 import warnings
 from sklearn.cluster import KMeans
 from sklearn.cluster import MeanShift, estimate_bandwidth
+from skimage.transform import resize
 
 
 warnings.simplefilter(action="ignore", category=FutureWarning)
@@ -79,8 +80,14 @@ for img in os.listdir("../images"):
     for sl in sorted_lines:
         print("\n", sl)
         for idx in sl:
-            bbox = bboxes[i]
-            print((bbox[0] + bbox[2])*(bboxes[i][1] + bboxes[i][3]))
+            bbox = bboxes[idx]
+            y1, x1, y2, x2 = bbox[0], bbox[1], bbox[2], bbox[3]
+            im = bw[y1:y2, x1:x2]
+            resized_im = resize(im, (32, 32))
+            print(resized_im.shape)
+            plt.imshow(resized_im)
+            plt.show()
+            #print((bbox[0] - bbox[2])*(bboxes[i][1] - bboxes[i][3]))
 
     # load the weights
     # run the crops through your neural network and print them out
