@@ -39,7 +39,6 @@ for key, value in params.items():
     print(key, value)
 print("--")
 print(params["Woutput"])
-breakpoint()
 
 # should look like your previous training loops
 losses = []
@@ -60,10 +59,22 @@ for itr in range(max_iters):
         ##########################
 
         # forward pass
+        print("xb", xb)
+        h1 = forward(xb, params, "layer1", relu)
+        h2 = forward(h1, params, "layer2", relu)
+        h3 = forward(h2, params, "layer3", relu)
+        output_img = forward(h3, params, "output", softmax)
 
         # loss
+        print("probs", output_img)
+        loss = np.sum((output_img - xb)**2)
+        print("loss", loss)
 
         # backward
+        delta1 = 2*output_img - 2*xb
+        delta2 = backwards(delta1, params, "output", linear_deriv)
+        grad_xb = backwards(delta2, params, "layer1", sigmoid_deriv)
+
 
         # apply gradient, remember to update momentum as well
         pass
