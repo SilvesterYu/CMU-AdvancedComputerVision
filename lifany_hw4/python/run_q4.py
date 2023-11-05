@@ -151,6 +151,3 @@ for img in os.listdir("../images"):
         txt_rows += txt[a:b] + "\n"
         a = b
     print(txt_rows)
-
-
-
