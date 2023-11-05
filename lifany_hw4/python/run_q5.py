@@ -37,11 +37,6 @@ initialize_weights(hidden_size, hidden_size, params, "layer2")
 initialize_weights(hidden_size, hidden_size, params, "layer3")
 initialize_weights(hidden_size, train_x.shape[1], params, "output")
 
-for key, value in params.items():
-    print(key, value)
-print("--")
-print(params["Woutput"])
-
 # should look like your previous training loops
 losses = []
 for itr in range(max_iters):
@@ -92,6 +87,12 @@ for itr in range(max_iters):
         print("itr: {:02d} \t loss: {:.2f}".format(itr,total_loss))
     if itr % lr_rate == lr_rate-1:
         learning_rate *= 0.9
+# --
+# save the final network
+saved_params = {k: v for k, v in params.items() if "_" not in k}
+with open("q5_weights.pickle", "wb") as handle:
+    pickle.dump(saved_params, handle, protocol=pickle.HIGHEST_PROTOCOL)
+# --
 
 # plot loss curve
 plt.plot(range(len(losses)), losses)
@@ -102,12 +103,7 @@ plt.ylim(0, None)
 plt.grid()
 plt.show()
 
-# --
-# save the final network
-saved_params = {k: v for k, v in params.items() if "_" not in k}
-with open("q5_weights.pickle", "wb") as handle:
-    pickle.dump(saved_params, handle, protocol=pickle.HIGHEST_PROTOCOL)
-# --
+
 
 # Q5.3.1
 # choose 5 labels (change if you want)
