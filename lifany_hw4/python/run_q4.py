@@ -46,7 +46,7 @@ for img in os.listdir("../images"):
     ##########################
     ##### your code here #####
     ##########################
-    # list of center points
+    # list of center points corresponding to the returned bboxes
     points = np.array([(bbox[0] + bbox[2])/2 for bbox in bboxes])
     points_h = [(i, (bboxes[i][1] + bboxes[i][3])/2) for i in range(len(bboxes))]
     print(points)
@@ -62,43 +62,25 @@ for img in os.listdir("../images"):
         else:
             lines.append(curr_cluster)
             curr_cluster = [points_h[i]]
-        curr_point = point
+        curr_point = point      
     lines.append(curr_cluster)
-    print(lines)
-
-    # km = KMeans(n_init=1, verbose=0, random_state=3425, init='k-means++', max_iter=5)
-    # km.fit(points.reshape(-1, 1)) 
-    # res = km.predict(points.reshape(-1, 1))
-
-    # X = points.reshape(-1, 1)
-    # ms = MeanShift(bandwidth=None, bin_seeding=True)
-    # ms.fit(X)
-    # res = ms.labels_
-
-    
-    # print("res", res)
-    # lines = [[] for i in range(len(np.unique(res)))]
-
-    
-    # for i in range(len(points)):
-    #     lines[res[i]].append(points_h[i])
-    print("bw", bw.shape)
-    print(lines)
     sorted_lines = []
     for i in range(len(lines)):
         line = lines[i]
         line.sort(key = lambda x: x[1])
-        print(i)
-        print(line)
-        print("\n")
-
-
+        sorted_lines.append([item[0] for item in line])
+    
     # crop the bounding boxes
     # note.. before you flatten, transpose the image (that's how the dataset is!)
     # consider doing a square crop, and even using np.pad() to get your images looking more like the dataset
     ##########################
     ##### your code here #####
     ##########################
+    for sl in sorted_lines:
+        print("\n", sl)
+        for idx in sl:
+            bbox = bboxes[i]
+            print((bbox[0] + bbox[2])*(bboxes[i][1] + bboxes[i][3]))
 
     # load the weights
     # run the crops through your neural network and print them out
@@ -112,3 +94,16 @@ for img in os.listdir("../images"):
     ##########################
     ##### your code here #####
     ##########################
+    # the new images
+
+
+    # initialize layers
+    initialize_weights(train_x.shape[1], hidden_size, params, "layer1")
+    initialize_weights(hidden_size, train_y.shape[1], params, "output")
+
+    h1 = forward(train_x, params, "layer1")
+    probs = forward(h1, params, "output", softmax)
+    loss, acc = compute_loss_and_acc(train_y, probs)
+
+
+

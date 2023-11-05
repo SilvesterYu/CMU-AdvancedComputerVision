@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 from mpl_toolkits.axes_grid1 import ImageGrid
 from nn import *
 
-np.random.seed(3)
+np.random.seed(42)
 
 train_data = scipy.io.loadmat("../data/nist36_train.mat")
 valid_data = scipy.io.loadmat("../data/nist36_valid.mat")
@@ -20,10 +20,10 @@ if False:  # view the data
         plt.imshow(crop.reshape(32, 32).T, cmap="Greys")
         plt.show()
 
-max_iters = 100
+max_iters = 200
 # pick a batch size, learning rate
 batch_size = 64
-learning_rate = 2e-3
+learning_rate = 1e-3
 hidden_size = 64
 ##########################
 ##### your code here #####
