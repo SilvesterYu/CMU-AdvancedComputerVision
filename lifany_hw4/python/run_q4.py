@@ -11,6 +11,7 @@ import skimage.io
 import skimage.filters
 import skimage.morphology
 import skimage.segmentation
+from skimage.transform import resize
 
 from nn import *
 from q4 import *
@@ -18,13 +19,11 @@ from q4 import *
 # do not include any more libraries here!
 # no opencv, no sklearn, etc!
 import warnings
-from sklearn.cluster import KMeans
-from sklearn.cluster import MeanShift, estimate_bandwidth
-from skimage.transform import resize
 
 # --
 hidden_size = 64
-new_max, new_min = 1, 0
+new_max, new_min = 1, 0 # for enhancing image contrast
+d = np.ones((11, 10)) # for letter dilation
 t1 = 'TODOLIST1MAKEATODOLIST2CHECKOFFTHEFIRSTTHINGONTODOLIST3REALIZEYOUHAVEALREADYCOMPLETED2THINGS4REWARDYOURSELFWITHANAP'
 t2 = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890'
 t3 = 'HAIKUSAREEASYBUTSOMETIMESTHEYDONTMAKESENSEREFRIGERATOR'
@@ -58,13 +57,12 @@ for img in os.listdir("../images"):
     # list of center points corresponding to the returned bboxes
     points = np.array([(bbox[0] + bbox[2])/2 for bbox in bboxes])
     points_h = [(i, (bboxes[i][1] + bboxes[i][3])/2) for i in range(len(bboxes))]
-    print(points)
-    lines = []
     N = len(points)
     # clustering parameter
     eps = 50
     curr_point = points[0]
     curr_cluster = [points_h[0]]
+    lines = []
     for i in range(1, N):
         point = points[i]
         if point <= curr_point + eps:
@@ -86,28 +84,27 @@ for img in os.listdir("../images"):
     ##########################
     ##### your code here #####
     ##########################
+    # preprocess the mini images and populate the X matrix for model input
     myX = np.zeros((N, 1024))
     xidx = 0
     for sl in sorted_lines:
-        print("\n", sl)
         for idx in sl:
+            # retrieve the mini images using bounding boxes and resize
             bbox = bboxes[idx]
             y1, x1, y2, x2 = bbox[0]-5, bbox[1]-5, bbox[2]+5, bbox[3]+5
             im = bw[y1:y2, x1:x2]
             im = np.pad(im, (20,18), 'maximum') 
-            d = np.ones((11, 10))
             dilated_im = erosion(im, d)
             resized_im = resize(dilated_im, (32, 32))
             resized_im = resized_im.T.reshape(1, 1024)
-            resized_im = (resized_im - 0.5)*10
+            # increase each mini image's contrast
             minimum, maximum = np.min(resized_im), np.max(resized_im)
             m = (new_max - new_min) / (maximum - minimum)
             b = new_min - m * minimum
             resized_im = m * resized_im + b
-
+            # populate the X matrix
             myX[xidx][:] = resized_im
             xidx += 1
-    print(myX)
 
     # load the weights
     # run the crops through your neural network and print them out
@@ -117,15 +114,14 @@ for img in os.listdir("../images"):
     letters = np.array(
         [_ for _ in string.ascii_uppercase[:26]] + [str(_) for _ in range(10)]
     )
-    print("letters", letters)
     params = pickle.load(open("q3_weights.pickle", "rb"))
     ##########################
     ##### your code here #####
     ##########################
+    # Create y groundtruth data
     indices = [i for i in range(36)]
     D = dict(zip(letters, indices))
     D1 = dict(zip(indices, letters))
-    print(D)
     if "01" in img:
         myt = t1
     elif "02" in img:
@@ -137,36 +133,24 @@ for img in os.listdir("../images"):
     myY = np.zeros((len(myt), 36))
     for i in range(len(myt)):
         myY[i][D[myt[i]]] = 1
-    
-    # print(myY)
-    # print(myX)
-    # print(myX[0])
-    # im = myX[0].reshape(32, 32).T
-    # print(im)
-    # # plt.imsave("imMy.png", im)
-    # print(myY)
-    # breakpoint()
-    # initialize layers
-    # initialize_weights(myX.shape[1], hidden_size, params, "layer1")
-    # initialize_weights(hidden_size, myY.shape[1], params, "output")
 
+    # Model predictions
     h1 = forward(myX, params, "layer1")
     probs = forward(h1, params, "output", softmax)
     loss, acc = compute_loss_and_acc(myY, probs)
-    
-    extracted_txt = []
-    for idx in range(myY.shape[0]):
-        print("Y", myY[idx].argmax(), probs[idx].argmax())
-        extracted_txt.append(D1[probs[idx].argmax()])
-    txt = "".join(extracted_txt) + " "
-    print("loss", loss, "acc", acc)
-    print("text", "".join(extracted_txt) + " ")
-    each_line = [len(line) for line in sorted_lines]
-    splt = []
-    for l in each_line:
-        splt.append(" ".join([j for j in txt[:l]]))
-        txt = txt[l:]
-    print("\n".join(splt))
+
+    # The raw extracted text
+    txt = "".join([D1[probs[idx].argmax()] for idx in range(myY.shape[0])])
+    print("img name: ", img, " loss: ", loss, " accuracy: ", acc)
+
+    # Print the extracted text in rows
+    txt_rows = ''
+    a, b = 0, 0
+    for line in sorted_lines:
+        b += len(line)
+        txt_rows += txt[a:b] + "\n"
+        a = b
+    print(txt_rows)
 
 
 
