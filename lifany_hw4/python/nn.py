@@ -141,7 +141,7 @@ def backwards(delta, params, name="", activation_deriv=sigmoid_deriv):
     loss_dJdy = delta * activation_deriv(post_act)
     grad_W = np.matmul(X.T, loss_dJdy)
     # -- take the per-class average of bias
-    grad_b = np.sum(loss_dJdy, axis=0)/loss_dJdy.shape[0]
+    grad_b = np.sum(loss_dJdy, axis=0)
     # grad_b = np.sum(loss_dJdy, axis=0)
     grad_X = np.matmul(loss_dJdy, W.T)
 
