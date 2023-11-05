@@ -29,6 +29,17 @@ params = Counter()
 ##########################
 ##### your code here #####
 ##########################
+params = {}
+initialize_weights(train_x.shape[1], hidden_size, params, "layer1")
+initialize_weights(hidden_size, hidden_size, params, "layer2")
+initialize_weights(hidden_size, hidden_size, params, "layer3")
+initialize_weights(hidden_size, train_x.shape[1], params, "output")
+params = Counter(params)
+for key, value in params.items():
+    print(key, value)
+print("--")
+print(params["Woutput"])
+breakpoint()
 
 # should look like your previous training loops
 losses = []
@@ -55,6 +66,7 @@ for itr in range(max_iters):
         # backward
 
         # apply gradient, remember to update momentum as well
+        pass
         
     
     losses.append(total_loss/train_x.shape[0])
