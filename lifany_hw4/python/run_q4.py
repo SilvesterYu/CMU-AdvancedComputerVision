@@ -124,6 +124,7 @@ for img in os.listdir("../images"):
     ##########################
     indices = [i for i in range(36)]
     D = dict(zip(letters, indices))
+    D1 = dict(zip(indices, letters))
     print(D)
     if "01" in img:
         myt = t1
@@ -153,9 +154,19 @@ for img in os.listdir("../images"):
     probs = forward(h1, params, "output", softmax)
     loss, acc = compute_loss_and_acc(myY, probs)
     
+    extracted_txt = []
     for idx in range(myY.shape[0]):
         print("Y", myY[idx].argmax(), probs[idx].argmax())
+        extracted_txt.append(D1[probs[idx].argmax()])
+    txt = "".join(extracted_txt) + " "
     print("loss", loss, "acc", acc)
+    print("text", "".join(extracted_txt) + " ")
+    each_line = [len(line) for line in sorted_lines]
+    splt = []
+    for l in each_line:
+        splt.append(txt[:l])
+        txt = txt[l:]
+    print("\n".join(splt))
 
 
 
