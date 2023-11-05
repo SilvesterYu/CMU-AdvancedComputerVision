@@ -164,7 +164,7 @@ for img in os.listdir("../images"):
     each_line = [len(line) for line in sorted_lines]
     splt = []
     for l in each_line:
-        splt.append(txt[:l])
+        splt.append(" ".join([j for j in txt[:l]]))
         txt = txt[l:]
     print("\n".join(splt))
 
