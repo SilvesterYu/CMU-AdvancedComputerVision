@@ -24,7 +24,7 @@ from skimage.transform import resize
 
 # --
 hidden_size = 64
-new_max, new_min = 0.96, 0.04
+new_max, new_min = 1, 0
 t1 = 'TODOLIST1MAKEATODOLIST2CHECKOFFTHEFIRSTTHINGONTODOLIST3REALIZEYOUHAVEALREADYCOMPLETED2THINGS4REWARDYOURSELFWITHANAP'
 t2 = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890'
 t3 = 'HAIKUSAREEASYBUTSOMETIMESTHEYDONTMAKESENSEREFRIGERATOR'
@@ -92,15 +92,15 @@ for img in os.listdir("../images"):
         print("\n", sl)
         for idx in sl:
             bbox = bboxes[idx]
-            y1, x1, y2, x2 = bbox[0], bbox[1], bbox[2], bbox[3]
+            y1, x1, y2, x2 = bbox[0]-5, bbox[1]-5, bbox[2]+5, bbox[3]+5
             im = bw[y1:y2, x1:x2]
             im = np.pad(im, (15,15), 'maximum') 
             d = np.ones((9, 9))
             dilated_im = erosion(im, d)
             resized_im = resize(dilated_im, (32, 32))
-            
-            # plt.imshow(resized_im)
-            # plt.show()
+            if "02" in img:
+                plt.imshow(resized_im)
+                plt.show()
             resized_im = resized_im.T.reshape(1, 1024)
             minimum, maximum = np.min(resized_im), np.max(resized_im)
             m = (new_max - new_min) / (maximum - minimum)
