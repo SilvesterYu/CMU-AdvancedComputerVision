@@ -24,7 +24,7 @@ from skimage.transform import resize
 
 # --
 hidden_size = 64
-new_max, new_min = 0.94, 0.3
+new_max, new_min = 0.96, 0.04
 t1 = 'TODOLIST1MAKEATODOLIST2CHECKOFFTHEFIRSTTHINGONTODOLIST3REALIZEYOUHAVEALREADYCOMPLETED2THINGS4REWARDYOURSELFWITHANAP'
 t2 = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890'
 t3 = 'HAIKUSAREEASYBUTSOMETIMESTHEYDONTMAKESENSEREFRIGERATOR'
@@ -94,12 +94,14 @@ for img in os.listdir("../images"):
             bbox = bboxes[idx]
             y1, x1, y2, x2 = bbox[0], bbox[1], bbox[2], bbox[3]
             im = bw[y1:y2, x1:x2]
-            resized_im = resize(im, (32, 32))
-            d = np.ones((4,4))
-            dilated_im = erosion(resized_im, d)
-            # plt.imshow(dilated_im)
+            im = np.pad(im, (15,15), 'maximum') 
+            d = np.ones((9, 9))
+            dilated_im = erosion(im, d)
+            resized_im = resize(dilated_im, (32, 32))
+            
+            # plt.imshow(resized_im)
             # plt.show()
-            resized_im = dilated_im.T.reshape(1, 1024)
+            resized_im = resized_im.T.reshape(1, 1024)
             minimum, maximum = np.min(resized_im), np.max(resized_im)
             m = (new_max - new_min) / (maximum - minimum)
             b = new_min - m * minimum
@@ -151,9 +153,10 @@ for img in os.listdir("../images"):
     h1 = forward(myX, params, "layer1")
     probs = forward(h1, params, "output", softmax)
     loss, acc = compute_loss_and_acc(myY, probs)
-    print("loss", loss, "acc", acc)
+    
     for idx in range(myY.shape[0]):
         print("Y", myY[idx].argmax(), probs[idx].argmax())
+    print("loss", loss, "acc", acc)
 
 
 

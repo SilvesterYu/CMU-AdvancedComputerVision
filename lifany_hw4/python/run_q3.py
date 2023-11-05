@@ -17,6 +17,7 @@ test_x, test_y = test_data["test_data"], test_data["test_labels"]
 # im = train_x[0].reshape(32, 32).T
 # print(im)
 # plt.imsave("im.png", im)
+# print(np.max(im), np.min(im))
 # breakpoint()
 if False:  # view the data
     np.random.shuffle(train_x)
