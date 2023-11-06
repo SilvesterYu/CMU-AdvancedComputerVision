@@ -9,7 +9,9 @@ class Net(nn.Module):
    def __init__(self):
       super(Net, self).__init__()
 
-      
+      self.linear1 = torch.nn.Linear(1024, 64)
+      self.linear2 = torch.nn.Linear(64, 36)
+      self.softmax = torch.nn.Softmax()
 
 # for Q6.2.1
 class CNN(nn.Module):
