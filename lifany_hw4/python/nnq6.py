@@ -13,7 +13,11 @@ class Net(nn.Module):
         self.linear2 = torch.nn.Linear(64, 36)
         self.softmax = torch.nn.Softmax()
 
-
+    def forward(self, x):
+        x = self.linear1(x)
+        x = self.linear2(x)
+        x = self.softmax(x)
+        return x
 
 # for Q6.2.1
 class CNN(nn.Module):
@@ -36,6 +40,3 @@ class CNN(nn.Module):
         self.fc1 = nn.Linear(9216, 128)
         # Second fully connected layer that outputs our 10 labels
         self.fc2 = nn.Linear(128, 10)
-
-my_nn = CNN()
-print(my_nn)
