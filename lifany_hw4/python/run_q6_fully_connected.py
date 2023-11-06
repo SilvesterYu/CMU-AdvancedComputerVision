@@ -27,4 +27,3 @@ trainLoader = dset.DataLoader(trainSet, batch_size=64, shuffle=True)
 testLoader = dset.DataLoader(testSet, batch_size=64, shuffle=False)
 
 
-
