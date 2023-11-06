@@ -31,7 +31,7 @@ myNet = Net().to(device)
 print(myNet)
 
 # Parameters
-max_iters = 200
+max_iters = 2
 learning_rate = 1e-3
 lossf = nn.CrossEntropyLoss()
 optimizer = optim.SGD(myNet.parameters(), lr=learning_rate)
@@ -71,3 +71,7 @@ for itr in range(max_iters):
                 itr, total_loss, accuracy
             )
         )
+
+# save the weights
+torch.save(myNet, 'q6_fully_connected.pth')
+
