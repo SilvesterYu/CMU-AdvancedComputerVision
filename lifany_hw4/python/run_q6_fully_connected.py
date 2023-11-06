@@ -26,4 +26,5 @@ testSet = datasets.MNIST(root='MNIST', download=True, train=False, transform=tra
 trainLoader = dset.DataLoader(trainSet, batch_size=64, shuffle=True)
 testLoader = dset.DataLoader(testSet, batch_size=64, shuffle=False)
 
-
+myNet = Net().to(device)
+print(myNet)

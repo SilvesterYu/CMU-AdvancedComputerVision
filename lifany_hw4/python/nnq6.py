@@ -9,15 +9,14 @@ class Net(nn.Module):
     def __init__(self):
         super(Net, self).__init__()
 
-        self.linear1 = torch.nn.Linear(1024, 64)
-        self.linear2 = torch.nn.Linear(64, 36)
-        self.softmax = torch.nn.Softmax()
+        self.main = nn.Sequential(
+            nn.Linear(1024, 64),
+            nn.Linear(64, 36),
+            nn.Softmax()
+        )
 
-    def forward(self, x):
-        x = self.linear1(x)
-        x = self.linear2(x)
-        x = self.softmax(x)
-        return x
+    def forward(self, X):
+        return self.main(X)
 
 # for Q6.2.1
 class CNN(nn.Module):
