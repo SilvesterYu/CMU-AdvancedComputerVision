@@ -1,27 +1,30 @@
 import torch
 import torchvision
-import torchvision.transforms as transforms
 import torch.nn as nn
 import torch.nn.functional as F
+import torch.utils.data as dset
+from torchvision import datasets, transforms
 import numpy as np
 import scipy
 import matplotlib.pyplot as plt
 
-from nnq6 import Net
+from nnq6 import *
 
-np.random.seed(42)
+# GPU or CPU
+device = 'cuda:0' if torch.cuda.is_available() else 'cpu'
+print('GPU State:', device)
 
-train_data = scipy.io.loadmat("../data/nist36_train.mat")
-valid_data = scipy.io.loadmat("../data/nist36_valid.mat")
-test_data = scipy.io.loadmat("../data/nist36_test.mat")
+# Transform to Tensor type and normalize
+transform = transforms.Compose(
+    [transforms.ToTensor(),
+     transforms.Normalize((0.5,), (0.5,)),]
+)
 
-train_x, train_y = train_data["train_data"], train_data["train_labels"]
-valid_x, valid_y = valid_data["valid_data"], valid_data["valid_labels"]
-test_x, test_y = test_data["test_data"], test_data["test_labels"]
+# Dataloaders
+trainSet = datasets.MNIST(root='MNIST', download=True, train=True, transform=transform)
+testSet = datasets.MNIST(root='MNIST', download=True, train=False, transform=transform)
+trainLoader = dset.DataLoader(trainSet, batch_size=64, shuffle=True)
+testLoader = dset.DataLoader(testSet, batch_size=64, shuffle=False)
 
 
-np.random.shuffle(train_x)
-for crop in train_x:
-    plt.imshow(crop.reshape(32, 32).T, cmap="Greys")
-    plt.show()
 
