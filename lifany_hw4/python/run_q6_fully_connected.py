@@ -31,8 +31,43 @@ myNet = Net().to(device)
 print(myNet)
 
 # Parameters
-epochs = 200
+max_iters = 200
 learning_rate = 1e-3
 lossf = nn.CrossEntropyLoss()
 optimizer = optim.SGD(myNet.parameters(), lr=learning_rate)
 
+# Training loop
+for itr in range(max_iters):
+    total_loss = 0.0
+    total_correct = 0.0
+    total_instances = 0
+
+    for times, data in enumerate(trainLoader):
+        inputs, labels = data[0].to(device), data[1].to(device)
+        inputs = inputs.view(inputs.shape[0], -1)
+
+        # Zero the parameter gradients
+        optimizer.zero_grad()
+
+        # Foward, backward, optimize
+        outputs = myNet(inputs)
+        loss = lossf(outputs, labels)
+        loss.backward()
+        optimizer.step()
+
+        # Total loss
+        total_loss += loss.item()
+
+        # average accuracy
+        classifications = torch.argmax(myNet(inputs), dim=1)
+        correct_predictions = sum(classifications==labels).item()
+        total_correct+=correct_predictions
+        total_instances+=len(inputs)
+    accuracy = round(total_correct/total_instances, 4)
+    
+    if itr % 2 == 0:
+        print(
+            "itr: {:02d} \t loss: {:.2f} \t acc : {:.2f}".format(
+                itr, total_loss, accuracy
+            )
+        )

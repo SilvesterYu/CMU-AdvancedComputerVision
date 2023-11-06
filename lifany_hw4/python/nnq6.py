@@ -12,13 +12,15 @@ class Net(nn.Module):
         super(Net, self).__init__()
 
         self.main = nn.Sequential(
-            nn.Linear(1024, 64),
+            nn.Linear(784, 64),
             nn.Linear(64, 36),
             nn.Softmax()
         )
 
     def forward(self, X):
         return self.main(X)
+    
+# TUTORIAL: https://medium.com/@nutanbhogendrasharma/pytorch-convolutional-neural-network-with-mnist-dataset-4e8a4265e118
 
 # for Q6.2.1
 class CNN(nn.Module):
