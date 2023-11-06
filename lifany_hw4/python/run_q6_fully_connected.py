@@ -4,6 +4,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 import torch.utils.data as dset
 from torchvision import datasets, transforms
+import torch.optim as optim
 import numpy as np
 import scipy
 import matplotlib.pyplot as plt
@@ -28,3 +29,10 @@ testLoader = dset.DataLoader(testSet, batch_size=64, shuffle=False)
 
 myNet = Net().to(device)
 print(myNet)
+
+# Parameters
+epochs = 200
+learning_rate = 1e-3
+lossf = nn.CrossEntropyLoss()
+optimizer = optim.SGD(myNet.parameters(), lr=learning_rate)
+
