@@ -35,7 +35,7 @@ myNet = Net()
 
 # Parameters
 max_iters = 200
-learning_rate = 5e-2
+learning_rate = 1e-1
 lossf = nn.CrossEntropyLoss()
 optimizer = optim.SGD(myNet.parameters(), lr=learning_rate)
 fname = 'q6_fully_connected.pth'

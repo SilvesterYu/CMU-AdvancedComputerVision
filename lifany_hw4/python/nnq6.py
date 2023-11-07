@@ -74,14 +74,6 @@ def training_loop(myNet, trainLoader, validLoader, device, max_iters, learning_r
     print(myNet)
     train_loss_list, train_acc_list, val_loss_list, val_acc_list = [], [], [], []
     for itr in range(max_iters):
-        accuracy, train_loss = evaluate_model(myNet, trainLoader, lossf, device)
-        train_acc_list.append(accuracy)
-        train_loss_list.append(train_loss)
-
-        val_accuracy, val_loss = evaluate_model(myNet, validLoader, lossf, device)
-        val_acc_list.append(val_accuracy)
-        val_loss_list.append(val_loss)
-
         myNet.train()
 
         total_loss = 0.0
@@ -101,24 +93,20 @@ def training_loop(myNet, trainLoader, validLoader, device, max_iters, learning_r
             loss.backward()
             optimizer.step()
 
-            # Total loss
-            total_loss += loss.item()
+            total_loss += loss
 
-            with torch.no_grad():
-                # average accuracy
-                classifications = torch.argmax(myNet(inputs), dim=1)
-                # labels = torch.argmax(labels, dim=1)
-                correct_predictions = sum(classifications==labels).item()
-                total_correct+=correct_predictions
-                total_instances+=len(inputs)
-            
-        ave_accuracy = round(total_correct/total_instances, 4)
+        train_accuracy, train_loss = evaluate_model(myNet, trainLoader, lossf, device)
+        train_acc_list.append(train_accuracy)
+        train_loss_list.append(train_loss)
+
+        val_accuracy, val_loss = evaluate_model(myNet, validLoader, lossf, device)
+        val_acc_list.append(val_accuracy)
+        val_loss_list.append(val_loss)
         
         if itr % 10 == 0:
-            
             print(
                 "itr: {:02d} \t loss: {:.2f} \t acc : {:.2f} \t eval_acc : {:.2f}".format(
-                    itr, total_loss, ave_accuracy,val_accuracy
+                    itr, total_loss, train_accuracy, val_accuracy
                 )
             )
 
