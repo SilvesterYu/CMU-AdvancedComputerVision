@@ -30,22 +30,28 @@ class CNN(nn.Module):
     def __init__(self):
         super(CNN, self).__init__()
 
-        # First 2D convolutional layer, taking in 1 input channel (image),
-        # outputting 32 convolutional features, with a square kernel size of 3
-        self.conv1 = nn.Conv2d(1, 32, 3, 1)
-        # Second 2D convolutional layer, taking in the 32 input layers,
-        # outputting 64 convolutional features, with a square kernel size of 3
-        self.conv2 = nn.Conv2d(32, 64, 3, 1)
+        self.conv_layers = nn.Sequential(
+            nn.Conv2d(1, 10, kernel_size=5),
+            nn.MaxPool2d(2),
+            nn.ReLU(),
+            nn.Conv2d(10, 20, kernel_size=5),
+            nn.Dropout(),
+            nn.MaxPool2d(2),
+            nn.ReLU(),
+        )
+        self.fc_layers = nn.Sequential(
+            nn.Linear(500, 50),
+            nn.ReLU(),
+            nn.Dropout(),
+            nn.Linear(50, 36),
+            nn.Softmax(dim=1)
+        )
 
-        # Designed to ensure that adjacent pixels are either all 0s or all active
-        # with an input probability
-        self.dropout1 = nn.Dropout2d(0.25)
-        self.dropout2 = nn.Dropout2d(0.5)
-
-        # First fully connected layer
-        self.fc1 = nn.Linear(9216, 128)
-        # Second fully connected layer that outputs our 10 labels
-        self.fc2 = nn.Linear(128, 10)
+    def forward(self, x):
+        x = self.conv_layers(x)
+        x = torch.flatten(x, 1)
+        x = self.fc_layers(x)
+        return x
 
 ####################################################################################################
 ######################################## HELPER FUNCTIONS ##########################################
@@ -77,14 +83,16 @@ def training_loop(myNet, trainLoader, validLoader, device, max_iters, learning_r
         total_instances = 0
 
         for times, data in enumerate(trainLoader):
+            #print(data)
             inputs, labels = data[0].to(device), data[1].to(device)
-            inputs = inputs.view(inputs.shape[0], -1)
+            #inputs = inputs.view(inputs.shape[0], -1)
 
             # Zero the parameter gradients
             optimizer.zero_grad()
 
             # Foward, backward, optimize
             outputs = myNet(inputs)
+            #print(outputs.shape, labels.shape)
             loss = lossf(outputs, labels)
             loss.backward()
             optimizer.step()
@@ -120,7 +128,7 @@ def evaluate_model(myNet, dataLoader, lossf, device):
     total_instances = 0
     for times, data in enumerate(dataLoader):
         inputs, labels = data[0].to(device), data[1].to(device)
-        inputs = inputs.view(inputs.shape[0], -1)
+        #inputs = inputs.view(inputs.shape[0], -1)
         outputs = myNet(inputs)
         loss = lossf(outputs, labels)
         # Total loss
