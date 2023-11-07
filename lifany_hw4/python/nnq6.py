@@ -10,8 +10,6 @@ import matplotlib.pyplot as plt
 ######################################## NEURAL NETWORKS ###########################################
 ####################################################################################################
 
-# TUTORIAL: https://clay-atlas.com/us/blog/2021/04/22/pytorch-en-tutorial-4-train-a-model-to-classify-mnist/
-
 # for Q6.1.1
 class Net(nn.Module):
     def __init__(self):
@@ -27,8 +25,6 @@ class Net(nn.Module):
     def forward(self, X):
         return self.main(X)
     
-# TUTORIAL: https://medium.com/@nutanbhogendrasharma/pytorch-convolutional-neural-network-with-mnist-dataset-4e8a4265e118
-
 # for Q6.2.1
 class CNN(nn.Module):
     def __init__(self):
@@ -117,12 +113,12 @@ def training_loop(myNet, trainLoader, validLoader, device, max_iters, learning_r
     plot_train_valid(train_acc_list, val_acc_list, "accuracy")
     plot_train_valid(train_loss_list, val_loss_list, "average loss")
 
-def evaluate_model(myNet, validLoader, lossf, device):
+def evaluate_model(myNet, dataLoader, lossf, device):
     myNet.eval()
     total_loss = 0.0
     total_correct = 0.0
     total_instances = 0
-    for times, data in enumerate(validLoader):
+    for times, data in enumerate(dataLoader):
         inputs, labels = data[0].to(device), data[1].to(device)
         inputs = inputs.view(inputs.shape[0], -1)
         outputs = myNet(inputs)
