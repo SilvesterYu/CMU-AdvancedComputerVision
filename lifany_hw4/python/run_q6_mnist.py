@@ -24,7 +24,6 @@ validLoader = np2loader(valid_x, valid_y, shuffling=False)
 testLoader = np2loader(test_x, test_y, shuffling=False)
 
 trainLoaderCNN = np2loader(train_x.reshape((len(train_x), 1, 32, 32)), train_y, batchsize=64)
-
 validLoaderCNN = np2loader(valid_x.reshape((len(valid_x), 1, 32, 32)), valid_y)
 ################################## Q6.1.1 #######################################
 # # Call the network
@@ -46,11 +45,14 @@ lossf = nn.CrossEntropyLoss()
 # print("Test accuracy: ", test_acc)
 
 ################################## Q6.1.2 #######################################
+max_iters = 200
+learning_rate = 1e-1
+lossf = nn.CrossEntropyLoss()
 fname = 'test.pth'
-myCNN = CNN().to(device)
+myCNN = CNN()
 optimizer = optim.SGD(myCNN.parameters(), lr=learning_rate)
 
-training_loop(myCNN, trainLoaderCNN, validLoaderCNN, device, max_iters, learning_rate, lossf, optimizer, fname)
+training_loop(myCNN, trainLoaderCNN, validLoaderCNN, device, max_iters, learning_rate, lossf, optimizer, fname, False)
 
 # def train(model, device, train_loader, optimizer, epoch):
 #     model.train()

@@ -25,7 +25,7 @@ class Net(nn.Module):
     def forward(self, X):
         return self.main(X)
     
-# for Q6.2.1
+# for Q6.1.2
 class CNN(nn.Module):
     def __init__(self):
         super(CNN, self).__init__()
@@ -39,12 +39,18 @@ class CNN(nn.Module):
             nn.MaxPool2d(2),
             nn.ReLU(),
         )
+        # self.fc_layers = nn.Sequential(
+        #     nn.Linear(500, 50),
+        #     nn.ReLU(),
+        #     nn.Dropout(),
+        #     nn.Linear(50, 36),
+        #     nn.Softmax(dim=1)
+        # )
         self.fc_layers = nn.Sequential(
-            nn.Linear(500, 50),
-            nn.ReLU(),
-            nn.Dropout(),
-            nn.Linear(50, 36),
-            nn.Softmax(dim=1)
+            nn.Linear(500, 64),
+            nn.Sigmoid(),
+            nn.Linear(64, 36),
+            #nn.Softmax()
         )
 
     def forward(self, x):
@@ -69,7 +75,7 @@ def np2loader(X, y, batchsize=128, shuffling=True):
         loader = torch.utils.data.DataLoader(data, shuffle=shuffling)
     return loader
 
-def training_loop(myNet, trainLoader, validLoader, device, max_iters, learning_rate, lossf, optimizer, fname):
+def training_loop(myNet, trainLoader, validLoader, device, max_iters, learning_rate, lossf, optimizer, fname, flatten=True):
     # Training loop
     # Initialize the network
     myNet = myNet.to(device)
@@ -85,7 +91,8 @@ def training_loop(myNet, trainLoader, validLoader, device, max_iters, learning_r
         for times, data in enumerate(trainLoader):
             #print(data)
             inputs, labels = data[0].to(device), data[1].to(device)
-            #inputs = inputs.view(inputs.shape[0], -1)
+            if flatten:
+                inputs = inputs.view(inputs.shape[0], -1)
 
             # Zero the parameter gradients
             optimizer.zero_grad()
@@ -99,11 +106,11 @@ def training_loop(myNet, trainLoader, validLoader, device, max_iters, learning_r
 
             total_loss += loss
 
-        train_accuracy, train_loss = evaluate_model(myNet, trainLoader, lossf, device)
+        train_accuracy, train_loss = evaluate_model(myNet, trainLoader, lossf, device, flatten)
         train_acc_list.append(train_accuracy)
         train_loss_list.append(train_loss)
 
-        val_accuracy, val_loss = evaluate_model(myNet, validLoader, lossf, device)
+        val_accuracy, val_loss = evaluate_model(myNet, validLoader, lossf, device, flatten)
         val_acc_list.append(val_accuracy)
         val_loss_list.append(val_loss)
         
@@ -121,14 +128,15 @@ def training_loop(myNet, trainLoader, validLoader, device, max_iters, learning_r
     plot_train_valid(train_acc_list, val_acc_list, "accuracy")
     plot_train_valid(train_loss_list, val_loss_list, "average loss")
 
-def evaluate_model(myNet, dataLoader, lossf, device):
+def evaluate_model(myNet, dataLoader, lossf, device, flatten=True):
     myNet.eval()
     total_loss = 0.0
     total_correct = 0.0
     total_instances = 0
     for times, data in enumerate(dataLoader):
         inputs, labels = data[0].to(device), data[1].to(device)
-        #inputs = inputs.view(inputs.shape[0], -1)
+        if flatten:
+            inputs = inputs.view(inputs.shape[0], -1)
         outputs = myNet(inputs)
         loss = lossf(outputs, labels)
         # Total loss
