@@ -52,6 +52,53 @@ class CNN(nn.Module):
         x = torch.flatten(x, 1)
         x = self.fc_layers(x)
         return x
+    
+# for Q6.1.3
+class CNNcifar(nn.Module):
+    def __init__(self):
+        super(CNNcifar, self).__init__()
+
+        self.conv_layers = nn.Sequential(
+            # nn.Conv2d(3, 32, kernel_size=5),
+            # nn.MaxPool2d(2, 2),
+            # nn.ReLU(),
+            # nn.Conv2d(32, 64, kernel_size=5),
+            # nn.Dropout(0.2),
+            # nn.MaxPool2d(2, 2),
+            # nn.ReLU(),
+            # nn.BatchNorm2d(64) 
+
+            # sees 32x32x3 image tensor
+            nn.Conv2d(3, 16, 3, padding=1),
+            nn.ReLU(),
+            nn.MaxPool2d(2, 2),
+            # sees 16x16x16 tensor
+            nn.Conv2d(16, 32, 3, padding=1),
+            nn.ReLU(),
+            nn.MaxPool2d(2, 2),
+            # sees 8x8x32 tensor
+            nn.Conv2d(32, 64, 3, padding=1),
+            nn.ReLU(),
+            nn.MaxPool2d(2, 2)
+
+            # nn.Conv2d(3, 32, 5, padding=1),
+            # nn.MaxPool2d(2, 2),
+            # nn.Conv2d(32, 64, 5, padding=1),
+            # nn.MaxPool2d(2, 2)
+        )
+
+        self.fc_layers = nn.Sequential(
+            nn.Linear(2304, 500),
+            nn.ReLU(),
+            nn.Linear(500, 10),
+            nn.ReLU()
+        )
+
+    def forward(self, x):
+        x = self.conv_layers(x)
+        x = torch.flatten(x, 1)
+        x = self.fc_layers(x)
+        return x
 
 ####################################################################################################
 ######################################## HELPER FUNCTIONS ##########################################
@@ -121,6 +168,8 @@ def training_loop(myNet, trainLoader, validLoader, device, max_iters, learning_r
     # visualize
     plot_train_valid(train_acc_list, val_acc_list, "accuracy")
     plot_train_valid(train_loss_list, val_loss_list, "average loss")
+    plot_train(train_acc_list, "accuracy")
+    plot_train(train_loss_list, "average loss")
 
 def evaluate_model(myNet, dataLoader, lossf, device, flatten=True):
     myNet.eval()
@@ -149,6 +198,17 @@ def evaluate_model(myNet, dataLoader, lossf, device, flatten=True):
 def plot_train_valid(train_data, valid_data, datatype):
     plt.plot(range(len(train_data)), train_data, label="training")
     plt.plot(range(len(valid_data)), valid_data, label="validation")
+    plt.xlabel("epoch")
+    plt.ylabel(datatype)
+    plt.xlim(0, len(train_data) - 1)
+    plt.ylim(0, None)
+    plt.legend()
+    plt.grid()
+    plt.show()
+
+# Plot train and loss / accuracies
+def plot_train(train_data, datatype):
+    plt.plot(range(len(train_data)), train_data, label="training")
     plt.xlabel("epoch")
     plt.ylabel(datatype)
     plt.xlim(0, len(train_data) - 1)
