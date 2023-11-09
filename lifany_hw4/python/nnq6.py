@@ -156,5 +156,3 @@ def plot_train_valid(train_data, valid_data, datatype):
     plt.legend()
     plt.grid()
     plt.show()
-
-

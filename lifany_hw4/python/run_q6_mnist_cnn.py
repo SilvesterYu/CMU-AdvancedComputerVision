@@ -36,10 +36,10 @@ max_iters = 200
 learning_rate = 1e-1
 lossf = nn.CrossEntropyLoss()
 optimizer = optim.SGD(myCNN.parameters(), lr=learning_rate)
-fname = 'test.pth'
+fname = 'q6_mnist_cnn.pth'
 
-# Training loop
-# training_loop(myCNN, trainLoaderCNN, validLoaderCNN, device, max_iters, learning_rate, lossf, optimizer, fname, False)
+# Training loop, comment this line when only doing testing
+training_loop(myCNN, trainLoaderCNN, validLoaderCNN, device, max_iters, learning_rate, lossf, optimizer, fname, False)
 
 # Test
 myCNN.load_state_dict(torch.load(fname))
