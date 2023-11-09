@@ -25,8 +25,7 @@ testLoader = np2loader(test_x, test_y, shuffling=False)
 
 trainLoaderCNN = np2loader(train_x.reshape((len(train_x), 1, 32, 32)), train_y, batchsize=64)
 validLoaderCNN = np2loader(valid_x.reshape((len(valid_x), 1, 32, 32)), valid_y)
-testLoaderCNN = np2loader(test_x.reshape((len(valid_x), 1, 32, 32)), test_y)
-
+testLoaderCNN = np2loader(test_x.reshape((len(test_x), 1, 32, 32)), test_y)
 
 ################################## Q6.1.2 #######################################
 # Call the network
@@ -44,5 +43,5 @@ fname = 'test.pth'
 
 # Test
 myCNN.load_state_dict(torch.load(fname))
-test_acc, _ = evaluate_model(myCNN, testLoader, lossf, device)
+test_acc, _ = evaluate_model(myCNN, testLoaderCNN, lossf, device, False)
 print("Test accuracy: ", test_acc)

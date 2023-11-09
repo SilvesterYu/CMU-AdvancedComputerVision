@@ -39,13 +39,7 @@ class CNN(nn.Module):
             nn.MaxPool2d(2),
             nn.ReLU(),
         )
-        # self.fc_layers = nn.Sequential(
-        #     nn.Linear(500, 50),
-        #     nn.ReLU(),
-        #     nn.Dropout(),
-        #     nn.Linear(50, 36),
-        #     nn.Softmax(dim=1)
-        # )
+
         self.fc_layers = nn.Sequential(
             nn.Linear(500, 64),
             nn.Sigmoid(),
