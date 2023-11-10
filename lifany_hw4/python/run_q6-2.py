@@ -24,8 +24,8 @@ print(myNet)
 
 # Parameters
 data_dir = "../data/oxford-flowers17/"
-max_iters = 50
-learning_rate = 1e-1
+max_iters = 100
+learning_rate = 1e-3
 batch_size = 64
 numworkers = 2
 lossf = nn.CrossEntropyLoss()
