@@ -5,6 +5,7 @@ import numpy as np
 import scipy
 from nnq6 import *
 import torch.nn as nn
+import torch.optim as optim
 from torch.autograd import Variable
 from torch.utils.data import DataLoader
 import torchvision.transforms as T
@@ -12,10 +13,8 @@ from torchvision.datasets import ImageFolder
 
 if torch.cuda.is_available():
     device = 'cuda:0'  
-    dtype = torch.cuda.FloatTensor
 else:
     device = 'cpu'
-    dtype = torch.FloatTensor
 print('GPU State:', device)
 
 ################################ Q 6.2 ############################
@@ -25,11 +24,12 @@ print(myNet)
 
 # Parameters
 data_dir = "../data/oxford-flowers17/"
-max_iters = 100
-learning_rate = 5e-2
+max_iters = 50
+learning_rate = 1e-1
 batch_size = 64
-num_workers = 2
-lossf = nn.CrossEntropyLoss().type(dtype)
+numworkers = 2
+lossf = nn.CrossEntropyLoss()
+optimizer = torch.optim.SGD(myNet.parameters(), lr=learning_rate)
 fname = "q6_flowers.pth"
 
 IMAGENET_MEAN = [0.485, 0.456, 0.406]
@@ -54,23 +54,20 @@ val_transform = T.Compose([
 train_dset = ImageFolder(data_dir + "train", transform=train_transform)
 train_loader = DataLoader(train_dset,
                     batch_size=batch_size,
-                    num_workers=num_workers,
+                    num_workers=numworkers,
                     shuffle=True)
 
 val_dset = ImageFolder(data_dir + "val", transform=val_transform)
 val_loader = DataLoader(val_dset,
-                batch_size=batch_size,
-                num_workers=num_workers)
+                    batch_size=batch_size,
+                    shuffle=False, 
+                num_workers=numworkers)
 
 test_dset = ImageFolder(data_dir + "test", transform=val_transform)
 test_loader = DataLoader(test_dset,
-                batch_size=batch_size,
-                num_workers=num_workers)
-
-# Configure myNet
-num_classes = len(train_dset.classes)
-myNet.type(dtype)
-optimizer = torch.optim.Adam(myNet.parameters(), lr=1e-3)
+                    batch_size=batch_size,
+                    shuffle=False, 
+                num_workers=numworkers)
 
 # Training loop
 training_loop(myNet, train_loader, val_loader, device, max_iters, learning_rate, lossf, optimizer, fname, False)

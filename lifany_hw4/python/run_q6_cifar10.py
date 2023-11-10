@@ -23,7 +23,7 @@ transform = transforms.Compose(
 max_iters = 50
 learning_rate = 1e-2
 lossf = nn.CrossEntropyLoss()
-optimizer = optim.SGD(myCNN.parameters(), lr=learning_rate)
+optimizer = torch.optim.SGD(myCNN.parameters(), lr=learning_rate)
 fname = 'q6_cifar_cnn.pth'
 batch_size = 64
 

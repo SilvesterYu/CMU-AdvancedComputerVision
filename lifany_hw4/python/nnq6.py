@@ -140,8 +140,11 @@ def training_loop(myNet, trainLoader, validLoader, device, max_iters, learning_r
 
             # Foward, backward, optimize
             outputs = myNet(inputs)
-            #print(outputs.shape, labels.shape)
+            # print(outputs.shape, labels.shape)
+            # print(outputs)
+            # print(labels)
             loss = lossf(outputs, labels)
+            #breakpoint()
             loss.backward()
             optimizer.step()
 
