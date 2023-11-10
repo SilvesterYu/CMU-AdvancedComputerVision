@@ -88,7 +88,7 @@ class CNNcifar(nn.Module):
         )
 
         self.fc_layers = nn.Sequential(
-            nn.Linear(2304, 500),
+            nn.Linear(1024, 500),
             nn.ReLU(),
             nn.Linear(500, 10),
             nn.ReLU()

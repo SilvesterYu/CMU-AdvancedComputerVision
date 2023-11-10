@@ -50,7 +50,7 @@ val_transform = T.Compose([
     T.Normalize(mean=IMAGENET_MEAN, std=IMAGENET_STD),
   ])
 
-# DAtaloaders
+# Dataloaders
 train_dset = ImageFolder(data_dir + "train", transform=train_transform)
 train_loader = DataLoader(train_dset,
                     batch_size=batch_size,

@@ -79,8 +79,6 @@ from torch.utils.data.dataloader import DataLoader
 import torch.nn as nn
 import torch.nn.functional as F
 
-
-
 # Load the pretrained network squeezenet1_1
 myNet = squeezenet1_1(SqueezeNet1_1_Weights)
 print(myNet)

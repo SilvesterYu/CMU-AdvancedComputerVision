@@ -21,19 +21,19 @@ transform = transforms.Compose(
 
 # Parameters
 max_iters = 50
-learning_rate = 1e-2
+learning_rate = 5e-3
 lossf = nn.CrossEntropyLoss()
 optimizer = torch.optim.SGD(myCNN.parameters(), lr=learning_rate)
 fname = 'q6_cifar_cnn.pth'
 batch_size = 64
 
 # Dataloaders
-trainset = torchvision.datasets.CIFAR10(root='./data', train=True,
+trainset = torchvision.datasets.CIFAR10(root='../data', train=True,
                                         download=True, transform=transform)
 trainLoaderCNN = torch.utils.data.DataLoader(trainset, batch_size=batch_size,
                                           shuffle=True, num_workers=2)
 
-testset = torchvision.datasets.CIFAR10(root='./data', train=False,
+testset = torchvision.datasets.CIFAR10(root='../data', train=False,
                                        download=True, transform=transform)
 testLoaderCNN = torch.utils.data.DataLoader(testset, batch_size=batch_size,
                                          shuffle=False, num_workers=2)
