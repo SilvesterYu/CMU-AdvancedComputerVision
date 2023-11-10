@@ -29,7 +29,7 @@ learning_rate = 1e-1
 batch_size = 64
 numworkers = 2
 lossf = nn.CrossEntropyLoss()
-optimizer = torch.optim.SGD(myNet.parameters(), lr=learning_rate)
+optimizer = torch.optim.Adam(myNet.parameters())
 fname = "q6_flowers.pth"
 
 IMAGENET_MEAN = [0.485, 0.456, 0.406]
