@@ -8,7 +8,7 @@ if len(sys.argv) > 1:
     output_folder = '../data/oxford-flowers17'
     splits = scipy.io.loadmat('datasplits.mat')
     maps = [('trn2','train'),('val2','val'),('tst2','test')]
-    labels = {'labels': (np.arange(1360,dtype=np.int) )//80 }
+    labels = {'labels': (np.arange(1360,dtype=int) )//80 }
     base_str = "image_{:04d}.jpg"
 else:
     output_folder = '../data/oxford-flowers102'

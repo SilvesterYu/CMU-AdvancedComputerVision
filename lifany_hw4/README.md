@@ -29,3 +29,9 @@ https://clay-atlas.com/us/blog/2021/04/22/pytorch-en-tutorial-4-train-a-model-to
 https://medium.com/@nutanbhogendrasharma/pytorch-convolutional-neural-network-with-mnist-dataset-4e8a4265e118
 
 https://colab.research.google.com/github/rpi-techfundamentals/spring2019-materials/blob/master/11-deep-learning1/04_pytorch_mnist.ipynb#scrollTo=Mc0oudXwpwAV
+
+cifar 10:
+https://www.analyticsvidhya.com/blog/2021/09/convolutional-neural-network-pytorch-implementation-on-cifar10-dataset/
+
+flowers 
+https://gist.github.com/jcjohnson/6e41e8512c17eae5da50aebef3378a4c
