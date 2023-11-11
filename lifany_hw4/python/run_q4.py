@@ -23,7 +23,6 @@ import warnings
 # --
 hidden_size = 64
 new_max, new_min = 1, 0 # for enhancing image contrast
-d = np.ones((11, 10)) # for letter dilation
 t1 = 'TODOLIST1MAKEATODOLIST2CHECKOFFTHEFIRSTTHINGONTODOLIST3REALIZEYOUHAVEALREADYCOMPLETED2THINGS4REWARDYOURSELFWITHANAP'
 t2 = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890'
 t3 = 'HAIKUSAREEASYBUTSOMETIMESTHEYDONTMAKESENSEREFRIGERATOR'
@@ -93,7 +92,8 @@ for img in os.listdir("../images"):
             bbox = bboxes[idx]
             y1, x1, y2, x2 = bbox[0]-5, bbox[1]-5, bbox[2]+5, bbox[3]+5
             im = bw[y1:y2, x1:x2]
-            im = np.pad(im, (20,18), 'maximum') 
+            im = np.pad(im, (int(0.14*im.shape[0]), int(0.145*im.shape[1])), 'maximum') 
+            d = np.ones((int(11*im.shape[0]/im.shape[1]), int(10*im.shape[1]/im.shape[0]))) # for letter dilation
             dilated_im = erosion(im, d)
             resized_im = resize(dilated_im, (32, 32))
             resized_im = resized_im.T.reshape(1, 1024)

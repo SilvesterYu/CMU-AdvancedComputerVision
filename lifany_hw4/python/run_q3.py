@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 from mpl_toolkits.axes_grid1 import ImageGrid
 from nn import *
 
-np.random.seed(42)
+np.random.seed(4)
 
 train_data = scipy.io.loadmat("../data/nist36_train.mat")
 valid_data = scipy.io.loadmat("../data/nist36_valid.mat")

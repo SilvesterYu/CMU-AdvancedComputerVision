@@ -20,7 +20,7 @@ transform = transforms.Compose(
      transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
 
 # Parameters
-max_iters = 50
+max_iters = 70
 learning_rate = 5e-3
 lossf = nn.CrossEntropyLoss()
 optimizer = torch.optim.SGD(myCNN.parameters(), lr=learning_rate)

@@ -130,24 +130,17 @@ def training_loop(myNet, trainLoader, validLoader, device, max_iters, learning_r
         total_instances = 0
 
         for times, data in enumerate(trainLoader):
-            #print(data)
             inputs, labels = data[0].to(device), data[1].to(device)
             if flatten:
                 inputs = inputs.view(inputs.shape[0], -1)
 
             # Zero the parameter gradients
             optimizer.zero_grad()
-
             # Foward, backward, optimize
             outputs = myNet(inputs)
-            # print(outputs.shape, labels.shape)
-            # print(outputs)
-            # print(labels)
             loss = lossf(outputs, labels)
-            #breakpoint()
             loss.backward()
             optimizer.step()
-
             total_loss += loss
 
         train_accuracy, train_loss = evaluate_model(myNet, trainLoader, lossf, device, flatten)
@@ -189,7 +182,10 @@ def evaluate_model(myNet, dataLoader, lossf, device, flatten=True):
         total_loss += loss.item()
         with torch.no_grad():
             # average accuracy
-            classifications = torch.argmax(myNet(inputs), dim=1)
+            classifications = torch.argmax(outputs, dim=1)
+            print(outputs)
+            print(classifications)
+            print(labels)
             # labels = torch.argmax(labels, dim=1)
             correct_predictions = sum(classifications==labels).item()
             total_correct+=correct_predictions
