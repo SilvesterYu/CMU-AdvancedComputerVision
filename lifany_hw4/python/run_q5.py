@@ -14,7 +14,7 @@ valid_data = scipy.io.loadmat('../data/nist36_valid.mat')
 train_x = train_data['train_data']
 valid_x = valid_data['valid_data']
 
-max_iters = 150
+max_iters = 100
 # pick a batch size, learning rate
 # batch_size = 128
 #learning_rate =  1e-2
