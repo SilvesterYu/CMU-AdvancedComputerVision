@@ -37,13 +37,13 @@ class CNN(nn.Module):
             nn.Conv2d(10, 20, kernel_size=5),
             nn.Dropout(),
             nn.MaxPool2d(2),
-            nn.ReLU(),
+            nn.ReLU()
         )
 
         self.fc_layers = nn.Sequential(
             nn.Linear(500, 64),
             nn.Sigmoid(),
-            nn.Linear(64, 36),
+            nn.Linear(64, 36)
             #nn.Softmax()
         )
 
@@ -92,6 +92,34 @@ class CNNcifar(nn.Module):
             nn.ReLU(),
             nn.Linear(500, 10),
             nn.ReLU()
+        )
+
+    def forward(self, x):
+        x = self.conv_layers(x)
+        x = torch.flatten(x, 1)
+        x = self.fc_layers(x)
+        return x
+    
+# for Q6.2
+class CNN2(nn.Module):
+    def __init__(self):
+        super(CNN2, self).__init__()
+
+        self.conv_layers = nn.Sequential(
+            nn.Conv2d(3, 10, kernel_size=5),
+            nn.MaxPool2d(2),
+            nn.ReLU(),
+            nn.Conv2d(10, 20, kernel_size=5),
+            nn.Dropout(),
+            nn.MaxPool2d(2),
+            nn.ReLU(),
+        )
+
+        self.fc_layers = nn.Sequential(
+            nn.Linear(56180, 128),
+            nn.Sigmoid(),
+            nn.Linear(128, 17),
+            #nn.Softmax()
         )
 
     def forward(self, x):
@@ -167,13 +195,16 @@ def training_loop(myNet, trainLoader, validLoader, device, max_iters, learning_r
     plot_train(train_acc_list, "accuracy")
     plot_train(train_loss_list, "average loss")
 
-def evaluate_model(myNet, dataLoader, lossf, device, flatten=True):
+def evaluate_model(myNet, dataLoader, lossf, device, flatten=True, my_class=False):
     myNet.eval()
     total_loss = 0.0
     total_correct = 0.0
     total_instances = 0
     for times, data in enumerate(dataLoader):
         inputs, labels = data[0].to(device), data[1].to(device)
+        if my_class != False:
+            for i in range(len(labels)):
+                labels[i] = my_class
         if flatten:
             inputs = inputs.view(inputs.shape[0], -1)
         outputs = myNet(inputs)
@@ -183,10 +214,6 @@ def evaluate_model(myNet, dataLoader, lossf, device, flatten=True):
         with torch.no_grad():
             # average accuracy
             classifications = torch.argmax(outputs, dim=1)
-            print(outputs)
-            print(classifications)
-            print(labels)
-            # labels = torch.argmax(labels, dim=1)
             correct_predictions = sum(classifications==labels).item()
             total_correct+=correct_predictions
             total_instances+=len(inputs)

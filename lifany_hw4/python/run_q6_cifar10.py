@@ -10,7 +10,7 @@ from nnq6 import *
 device = 'cuda:0' if torch.cuda.is_available() else 'cpu'
 print('GPU State:', device)
 
-################################## Q6.1.2 #######################################
+################################## Q6.1.3 #######################################
 # Call the network
 myCNN = CNNcifar()
 

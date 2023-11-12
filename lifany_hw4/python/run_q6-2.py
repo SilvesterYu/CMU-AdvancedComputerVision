@@ -76,3 +76,28 @@ training_loop(myNet, train_loader, val_loader, device, max_iters, learning_rate,
 myNet.load_state_dict(torch.load(fname))
 test_acc, _ = evaluate_model(myNet, test_loader, lossf, device, False)
 print("Test accuracy: ", test_acc)
+
+######################### My own network for comparison #######################
+# Comment out the # Training loop and # Test above if only running this part
+# Load my own model
+myNet2 = CNN2()
+print(myNet)
+
+# Parameters
+data_dir = "../data/oxford-flowers17/"
+max_iters = 100
+learning_rate = 1e-3
+batch_size = 64
+numworkers = 2
+lossf = nn.CrossEntropyLoss()
+optimizer = torch.optim.Adam(myNet2.parameters())
+fname2 = "q6_flowers_mymodel.pth"
+
+# Training loop
+training_loop(myNet2, train_loader, val_loader, device, max_iters, learning_rate, lossf, optimizer, fname2, False)
+
+# Test
+myNet2.load_state_dict(torch.load(fname2))
+test_acc, _ = evaluate_model(myNet2, test_loader, lossf, device, False)
+print("Test accuracy of my model: ", test_acc)
+

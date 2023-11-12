@@ -112,3 +112,41 @@ valdata = ImageFolder(data_dir + "val", transform=transformer)
 
 testdata = ImageFolder(data_dir + "test", transform=transformer)
 
+# -- scratch below, please ignore --
+
+# Dataloaders
+# ds = load_dataset("imagenet-1k")
+# val_ds = ds["val"]
+# print(ds)
+# breakpoint()
+
+# Dataloaders
+# with open(data_dir + "val_data", 'rb') as f:
+#     val_data = pickle.load(f)
+
+# x = val_data["data"]
+# y = val_data["labels"]
+# # print(max(y,key=y.count))
+# x = np.dstack((x[:, :1024], x[:, 1024:2048], x[:, 2048:]))
+# x = x.reshape((x.shape[0], 32, 32))
+
+# idx = [i for i in range(len(y)) if y[i] == my_class]
+# x = [x[i] for i in idx]
+# y = [y[i] for i in idx]
+# print(x[0])
+# print(y)
+# breakpoint()
+
+# y = [target-1 for target in y]
+
+# tensor_x = torch.Tensor(x) # transform to torch tensor
+# tensor_y = torch.Tensor(y).type(torch.LongTensor)
+
+# my_dataset = TensorDataset(tensor_x, tensor_y) # create your datset
+# test_loader = DataLoader(my_dataset, batch_size=batch_size) # create your dataloader
+
+# Dataloaders
+# testset = torchvision.datasets.ImageNet(root='../data/Imagenet32_val/', split='val', train=False, download=True, transform=transform)
+
+# test_loader = torch.utils.data.DataLoader(testset,
+#                                          shuffle=False, num_workers=2)
