@@ -5,4 +5,6 @@ Homework 1: writeup is not full-mark, but all non-bonus question code works
 
 Homework 2: full mark
 
-Homework 3:
+Homework 3: full mark
+
+Homework 4: 
