@@ -35,3 +35,9 @@ https://www.analyticsvidhya.com/blog/2021/09/convolutional-neural-network-pytorc
 
 flowers 
 https://gist.github.com/jcjohnson/6e41e8512c17eae5da50aebef3378a4c
+
+Imagenet200 downsampled validation data
+https://www.kaggle.com/datasets/nikhilshingadiya/tinyimagenet200
+
+Their classes
+https://github.com/fh295/semanticCNN/blob/master/imagenet_labels/labels.txt
