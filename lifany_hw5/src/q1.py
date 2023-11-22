@@ -8,6 +8,8 @@ import numpy as np
 from matplotlib import pyplot as plt
 from skimage.color import rgb2xyz
 from utils import plotSurface
+import skimage
+import scipy
 
 
 def renderNDotLSphere(center, rad, light, pxSize, res):
@@ -52,15 +54,15 @@ def renderNDotLSphere(center, rad, light, pxSize, res):
     Z = np.real(Z)
 
     # Your code here
-    im = plt.figure()
-    ax = im.add_subplot(projection='3d')
-    ax.plot_surface(X, Y, Z)
-    plt.show()
-    image = np.zeros((res[1], res[0]))
-    for i in range(image.shape[0]):
-        for j in range(image.shape[1]):
-            image[i][j] = np.array([X[i][j], Y[i][j], Z[i][j]]).dot(light)
-    print(image)
+    # im = plt.figure()
+    # ax = im.add_subplot(projection='3d')
+    # ax.plot_surface(X, Y, Z)
+    # plt.show()
+
+    w, h = res[0], res[1]
+    XYZ = np.stack((X, Y, Z), axis=2).reshape((w * h, -1))
+    image = np.dot(XYZ, light).reshape((h, w))
+    image = np.clip(image, 0, None)
 
     return image
 
@@ -71,7 +73,7 @@ def loadData(path="../data/"):
 
     Load data from the path given. The images are stored as input_n.tif
     for n = {1...7}. The source lighting directions are stored in
-    sources.mat.
+    sources.npy.
 
     Parameters
     ---------
@@ -90,11 +92,21 @@ def loadData(path="../data/"):
         Image shape
 
     """
-
-    I = None
-    L = None
-    s = None
     # Your code here
+    I = []
+    for i in range(1, 8):
+        im_name = "input_" + str(i) + ".tif"
+        im0 = skimage.io.imread(fname = path + im_name)
+        print(im0)
+        im = skimage.color.rgb2gray(im0).flatten()
+        I.append(im)
+        print(im)
+    I = np.array(I).astype(np.int16)
+
+    L = np.load(path + 'sources.npy').T
+
+    s = im0.shape
+
     return I, L, s
 
 
@@ -224,18 +236,21 @@ if __name__ == "__main__":
     image = renderNDotLSphere(center, radius, light, pxSize, res)
     plt.figure()
     plt.imshow(image, cmap="gray")
+    plt.show()
     plt.imsave("1b-a.png", image, cmap="gray")
 
     light = np.asarray([1, -1, 1]) / np.sqrt(3)
     image = renderNDotLSphere(center, radius, light, pxSize, res)
     plt.figure()
     plt.imshow(image, cmap="gray")
+    plt.show()
     plt.imsave("1b-b.png", image, cmap="gray")
 
     light = np.asarray([-1, -1, 1]) / np.sqrt(3)
     image = renderNDotLSphere(center, radius, light, pxSize, res)
     plt.figure()
     plt.imshow(image, cmap="gray")
+    plt.show()
     plt.imsave("1b-c.png", image, cmap="gray")
 
     # Part 1(c)
@@ -243,6 +258,13 @@ if __name__ == "__main__":
 
     # Part 1(d)
     # Your code here
+    print(I)
+    U, Sigma, VT = np.linalg.svd(I, full_matrices=False)
+    print(Sigma)
+    print(np.linalg.matrix_rank(I))
+
+
+    '''
 
     # Part 1(e)
     B = estimatePseudonormalsCalibrated(I, L)
@@ -256,3 +278,4 @@ if __name__ == "__main__":
     # Part 1(i)
     surface = estimateShape(normals, s)
     plotSurface(surface)
+    '''
