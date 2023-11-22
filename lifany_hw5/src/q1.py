@@ -52,11 +52,15 @@ def renderNDotLSphere(center, rad, light, pxSize, res):
     Z = np.real(Z)
 
     # Your code here
-    image = plt.figure()
-    ax = image.add_subplot(projection='3d')
+    im = plt.figure()
+    ax = im.add_subplot(projection='3d')
     ax.plot_surface(X, Y, Z)
-    
     plt.show()
+    image = np.zeros((res[1], res[0]))
+    for i in range(image.shape[0]):
+        for j in range(image.shape[1]):
+            image[i][j] = np.array([X[i][j], Y[i][j], Z[i][j]]).dot(light)
+    print(image)
 
     return image
 
