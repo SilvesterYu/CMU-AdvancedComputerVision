@@ -11,6 +11,7 @@ from utils import plotSurface
 
 
 def renderNDotLSphere(center, rad, light, pxSize, res):
+    # https://stackoverflow.com/questions/67867707/make-a-sphere-from-a-circle-of-dots
     """
     Question 1 (b)
 
@@ -50,8 +51,13 @@ def renderNDotLSphere(center, rad, light, pxSize, res):
     Y[np.real(Z) == 0] = 0
     Z = np.real(Z)
 
-    image = None
     # Your code here
+    image = plt.figure()
+    ax = image.add_subplot(projection='3d')
+    ax.plot_surface(X, Y, Z)
+    
+    plt.show()
+
     return image
 
 
