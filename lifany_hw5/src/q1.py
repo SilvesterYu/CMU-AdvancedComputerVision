@@ -60,7 +60,7 @@ def renderNDotLSphere(center, rad, light, pxSize, res):
     # plt.show()
 
     w, h = res[0], res[1]
-    XYZ = np.stack((X, Y, Z), axis=2).reshape((w * h, -1))
+    XYZ = np.stack((X, -Y, Z), axis = 2).reshape((h*w, -1))
     image = np.dot(XYZ, light).reshape((h, w))
     image = np.clip(image, 0, None)
 
@@ -96,16 +96,16 @@ def loadData(path="../data/"):
     I = []
     for i in range(1, 8):
         im_name = "input_" + str(i) + ".tif"
-        im0 = skimage.io.imread(fname = path + im_name)
-        print(im0)
-        im = skimage.color.rgb2gray(im0).flatten()
+        # preserve bit depth while reading, datatype should be uint16
+        im0 = skimage.io.imread(fname = path + im_name).astype(np.uint16)
+        # Y channel (channel 1) is the luminance
+        im = skimage.color.rgb2xyz(im0)[::1].flatten()
         I.append(im)
-        print(im)
-    I = np.array(I).astype(np.int16)
+    I = np.array(I)
 
     L = np.load(path + 'sources.npy').T
 
-    s = im0.shape
+    s = im0.shape[:2]
 
     return I, L, s
 
@@ -131,7 +131,7 @@ def estimatePseudonormalsCalibrated(I, L):
         The 3 x P matrix of pesudonormals
     """
 
-    B = None
+    B = np.linalg.lstsq(L.T, I)[0]
     # Your code here
     return B
 
@@ -226,6 +226,7 @@ def estimateShape(normals, s):
 
 
 if __name__ == "__main__":
+    '''
     # Part 1(b)
     radius = 0.75  # cm
     center = np.asarray([0, 0, 0])  # cm
@@ -252,22 +253,22 @@ if __name__ == "__main__":
     plt.imshow(image, cmap="gray")
     plt.show()
     plt.imsave("1b-c.png", image, cmap="gray")
+    '''
 
     # Part 1(c)
     I, L, s = loadData("../data/")
 
     # Part 1(d)
     # Your code here
-    print(I)
+    I, L, s = loadData()
     U, Sigma, VT = np.linalg.svd(I, full_matrices=False)
-    print(Sigma)
-    print(np.linalg.matrix_rank(I))
-
-
-    '''
+    print("1(d) Sigma: ", Sigma)
+    
 
     # Part 1(e)
     B = estimatePseudonormalsCalibrated(I, L)
+    print("1(d) estimate B using least squares, B = ", B)
+
 
     # Part 1(f)
     albedos, normals = estimateAlbedosNormals(B)
@@ -275,6 +276,8 @@ if __name__ == "__main__":
     plt.imsave("1f-a.png", albedoIm, cmap="gray")
     plt.imsave("1f-b.png", normalIm, cmap="rainbow")
 
+
+    '''
     # Part 1(i)
     surface = estimateShape(normals, s)
     plotSurface(surface)
