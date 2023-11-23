@@ -99,8 +99,9 @@ def loadData(path="../data/"):
         # preserve bit depth while reading, datatype should be uint16
         im0 = skimage.io.imread(fname = path + im_name).astype(np.uint16)
         # Y channel (channel 1) is the luminance
-        im = skimage.color.rgb2xyz(im0)[::1].flatten()
+        im = skimage.color.rgb2xyz(im0)[:,:,1].flatten()
         I.append(im)
+        print(im.shape)
     I = np.array(I)
 
     L = np.load(path + 'sources.npy').T
@@ -156,8 +157,9 @@ def estimateAlbedosNormals(B):
         The 3 x P matrix of normals
     """
 
-    albedos = None
-    normals = None
+    albedos = np.linalg.norm(B, axis = 0)
+    print(albedos)
+    normals = B / albedos
     # Your code here
     return albedos, normals
 
@@ -191,10 +193,10 @@ def displayAlbedosNormals(albedos, normals, s):
         Normals reshaped as an s x 3 image
 
     """
-
-    albedoIm = None
-    normalIm = None
     # Your code here
+    albedoIm = albedos.reshape(s)
+    normalIm = normals.T.reshape(s[0], s[1], 3)
+    normalIm = np.clip(normalIm, 0, 1)
     return albedoIm, normalIm
 
 
@@ -273,12 +275,10 @@ if __name__ == "__main__":
     # Part 1(f)
     albedos, normals = estimateAlbedosNormals(B)
     albedoIm, normalIm = displayAlbedosNormals(albedos, normals, s)
-    plt.imsave("1f-a.png", albedoIm, cmap="gray")
+    plt.imsave("1f-a-0.png", albedoIm, cmap="gray")
     plt.imsave("1f-b.png", normalIm, cmap="rainbow")
 
 
-    '''
     # Part 1(i)
-    surface = estimateShape(normals, s)
-    plotSurface(surface)
-    '''
+    #surface = estimateShape(normals, s)
+    #plotSurface(surface)
