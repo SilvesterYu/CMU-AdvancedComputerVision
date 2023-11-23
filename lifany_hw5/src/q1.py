@@ -139,7 +139,7 @@ def estimatePseudonormalsCalibrated(I, L):
 
 def estimateAlbedosNormals(B):
     """
-    Question 1 (e)
+    Question 1 (f)
 
     From the estimated pseudonormals, estimate the albedos and normals
 
@@ -195,13 +195,15 @@ def displayAlbedosNormals(albedos, normals, s):
     # Your code here
     albedoIm = albedos.reshape(s)
     normalIm = normals.T.reshape(s[0], s[1], 3)
-    normalIm = np.clip(normalIm, 0, 1)
+    scale = np.max(normalIm) - np.min(normalIm)
+    normalIm = (normalIm - np.min(normalIm)) / scale
+    #normalIm = np.clip(normalIm, 0, 1)
     return albedoIm, normalIm
 
 
 def estimateShape(normals, s):
     """
-    Question 1 (j)
+    Question 1 (i)
 
     Integrate the estimated normals to get an estimate of the depth map
     of the surface.
