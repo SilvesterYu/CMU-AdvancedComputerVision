@@ -7,7 +7,7 @@
 import numpy as np
 from matplotlib import pyplot as plt
 from skimage.color import rgb2xyz
-from utils import plotSurface
+from utils import plotSurface, integrateFrankot
 import skimage
 import scipy
 
@@ -53,15 +53,17 @@ def renderNDotLSphere(center, rad, light, pxSize, res):
     Y[np.real(Z) == 0] = 0
     Z = np.real(Z)
 
-    # Your code here
     # im = plt.figure()
     # ax = im.add_subplot(projection='3d')
     # ax.plot_surface(X, Y, Z)
     # plt.show()
 
-    w, h = res[0], res[1]
-    XYZ = np.stack((X, -Y, Z), axis = 2).reshape((h*w, -1))
-    image = np.dot(XYZ, light).reshape((h, w))
+    # w, h = res[0], res[1]
+    # XYZ = np.stack((X, -Y, Z), axis = 2).reshape((h*w, -1))
+    # image = np.dot(XYZ, light).reshape((h, w))
+
+    # Your code here
+    image = X * light[0] - Y * light[1] + Z * light[2]
     image = np.clip(image, 0, None)
 
     return image
@@ -101,7 +103,6 @@ def loadData(path="../data/"):
         # Y channel (channel 1) is the luminance
         im = skimage.color.rgb2xyz(im0)[:,:,1].flatten()
         I.append(im)
-        print(im.shape)
     I = np.array(I)
 
     L = np.load(path + 'sources.npy').T
@@ -222,14 +223,18 @@ def estimateShape(normals, s):
         The image, of size s, of estimated depths at each point
 
     """
-
-    surface = None
     # Your code here
+    fx = - normals[0, :] / normals[2, :]
+    fy = - normals[1, :] / normals[2, :]
+    fx = fx.reshape(s)
+    fy = fy.reshape(s)
+    surface = integrateFrankot(fx, fy)
+    
     return surface
 
 
 if __name__ == "__main__":
-    '''
+    
     # Part 1(b)
     radius = 0.75  # cm
     center = np.asarray([0, 0, 0])  # cm
@@ -256,7 +261,7 @@ if __name__ == "__main__":
     plt.imshow(image, cmap="gray")
     plt.show()
     plt.imsave("1b-c.png", image, cmap="gray")
-    '''
+
 
     # Part 1(c)
     I, L, s = loadData("../data/")
@@ -281,5 +286,5 @@ if __name__ == "__main__":
 
 
     # Part 1(i)
-    #surface = estimateShape(normals, s)
-    #plotSurface(surface)
+    surface = estimateShape(normals, s)
+    plotSurface(surface)
