@@ -275,7 +275,7 @@ if __name__ == "__main__":
     # Part 1(f)
     albedos, normals = estimateAlbedosNormals(B)
     albedoIm, normalIm = displayAlbedosNormals(albedos, normals, s)
-    plt.imsave("1f-a-0.png", albedoIm, cmap="gray")
+    plt.imsave("1f-a.png", albedoIm, cmap="gray")
     plt.imsave("1f-b.png", normalIm, cmap="rainbow")
 
 
