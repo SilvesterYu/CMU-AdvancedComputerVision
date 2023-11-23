@@ -158,7 +158,6 @@ def estimateAlbedosNormals(B):
     """
 
     albedos = np.linalg.norm(B, axis = 0)
-    print(albedos)
     normals = B / albedos
     # Your code here
     return albedos, normals
