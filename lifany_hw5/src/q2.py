@@ -37,24 +37,16 @@ def estimatePseudonormalsUncalibrated(I):
 
     """
 
-    # # Your code here
-    # U, Sigma, VT = np.linalg.svd(I, full_matrices=False)
-    # U = U[:, :3]
-    # VT = VT[:3, :]
-    # Sigma_sqrt = np.diag(np.sqrt(Sigma[:3]))
-    # L = np.matmul(U, Sigma_sqrt).T
-    # B = np.matmul(Sigma_sqrt, VT)
-    # # L = np.matmul(U, np.diag(Sigma[:3])).T
-    # # B = VT
-    U,S,Vt = np.linalg.svd(I, full_matrices=False)
-    S[3:] = 0
-    S31 = np.diag(S[:3])
-    VT31 = Vt[:3,:]
-    B = np.dot(np.sqrt(S31),VT31)
-    L = np.dot(U[:,:3],np.sqrt(S31)).T
+    # Your code here
+    U, Sigma, VT = np.linalg.svd(I, full_matrices=False)
+    U = U[:, :3]
+    VT = VT[:3, :]
+    Sigma_sqrt = np.diag(np.sqrt(Sigma[:3]))
+    L = np.matmul(U, Sigma_sqrt).T
+    B = np.matmul(Sigma_sqrt, VT)
+    # L = np.matmul(U, np.diag(Sigma[:3])).T
+    # B = VT
     return B, L
-    
-    #return B, L
 
 
 def plotBasRelief(B, mu, nu, lam):
