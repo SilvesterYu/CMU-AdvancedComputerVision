@@ -14,7 +14,7 @@ from q1 import (
     estimateShape,
 )
 from q1 import estimateShape
-from utils import enforceIntegrability, plotSurface
+from utils import enforceIntegrability, plotSurface, integrateFrankot
 
 def estimatePseudonormalsUncalibrated(I):
     """
@@ -37,9 +37,16 @@ def estimatePseudonormalsUncalibrated(I):
 
     """
 
-    B = None
-    L = None
     # Your code here
+    U, Sigma, VT = np.linalg.svd(I, full_matrices=False)
+    U = U[:, :3]
+    VT = VT[:3, :]
+    Sigma_sqrt = np.diag(np.sqrt(Sigma[:3]))
+    # L = np.matmul(U, Sigma_sqrt).T
+    # B = np.matmul(Sigma_sqrt, VT)
+    L = np.matmul(U, np.diag(Sigma[:3])).T
+    B = VT
+    
     return B, L
 
 
@@ -72,16 +79,29 @@ def plotBasRelief(B, mu, nu, lam):
     # Your code here
     pass
 
-    if __name__ == "__main__":
-        pass
-        # Part 2 (b)
-        # Your code here
+if __name__ == "__main__":
 
-        # Part 2 (d)
-        # Your code here
+    # Part 2 (b)
+    # Your code here
+    I, L, s = loadData("../data/")
+    print("original L ", L)
+    B, L = estimatePseudonormalsUncalibrated(I)
 
-        # Part 2 (e)
-        # Your code here
+    albedos, normals = estimateAlbedosNormals(B)
+    albedoIm, normalIm = displayAlbedosNormals(albedos, normals, s)
+    plt.imsave("2a-a.png", albedoIm, cmap="gray")
+    plt.imsave("2a-b.png", normalIm, cmap="rainbow")
+    print("estimated L ", L)
 
-        # Part 2 (f)
-        # Your code here
+    # Part 2 (d)
+    # Your code here
+    surface = estimateShape(normals, s)
+    plotSurface(surface)
+
+    # Part 2 (e)
+    # Your code here
+    surface_f = enforceIntegrability(normals, s)
+    plotSurface(surface_f)
+
+    # Part 2 (f)
+    # Your code here
