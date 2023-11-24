@@ -37,17 +37,24 @@ def estimatePseudonormalsUncalibrated(I):
 
     """
 
-    # Your code here
-    U, Sigma, VT = np.linalg.svd(I, full_matrices=False)
-    U = U[:, :3]
-    VT = VT[:3, :]
-    Sigma_sqrt = np.diag(np.sqrt(Sigma[:3]))
+    # # Your code here
+    # U, Sigma, VT = np.linalg.svd(I, full_matrices=False)
+    # U = U[:, :3]
+    # VT = VT[:3, :]
+    # Sigma_sqrt = np.diag(np.sqrt(Sigma[:3]))
     # L = np.matmul(U, Sigma_sqrt).T
     # B = np.matmul(Sigma_sqrt, VT)
-    L = np.matmul(U, np.diag(Sigma[:3])).T
-    B = VT
-    
+    # # L = np.matmul(U, np.diag(Sigma[:3])).T
+    # # B = VT
+    U,S,Vt = np.linalg.svd(I, full_matrices=False)
+    S[3:] = 0
+    S31 = np.diag(S[:3])
+    VT31 = Vt[:3,:]
+    B = np.dot(np.sqrt(S31),VT31)
+    L = np.dot(U[:,:3],np.sqrt(S31)).T
     return B, L
+    
+    #return B, L
 
 
 def plotBasRelief(B, mu, nu, lam):
@@ -85,22 +92,28 @@ if __name__ == "__main__":
     # Your code here
     I, L, s = loadData("../data/")
     print("original L ", L)
-    B, L = estimatePseudonormalsUncalibrated(I)
+    B1, L1 = estimatePseudonormalsUncalibrated(I)
 
-    albedos, normals = estimateAlbedosNormals(B)
+    albedos, normals = estimateAlbedosNormals(B1)
     albedoIm, normalIm = displayAlbedosNormals(albedos, normals, s)
     plt.imsave("2a-a.png", albedoIm, cmap="gray")
     plt.imsave("2a-b.png", normalIm, cmap="rainbow")
-    print("estimated L ", L)
+    print("estimated L ", L1)
 
     # Part 2 (d)
     # Your code here
+    albedoIm, normalIm = displayAlbedosNormals(albedos, normals, s)
     surface = estimateShape(normals, s)
     plotSurface(surface)
 
     # Part 2 (e)
     # Your code here
-    surface_f = enforceIntegrability(normals, s)
+    Bt = enforceIntegrability(B1, s)
+    # repeat (b)
+    albedos1, normals1 = estimateAlbedosNormals(Bt)
+    albedoIm, normalIm = displayAlbedosNormals(albedos1, normals1, s)
+    # repeat (d)
+    surface_f = estimateShape(normals1, s)
     plotSurface(surface_f)
 
     # Part 2 (f)
