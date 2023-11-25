@@ -125,8 +125,14 @@ if __name__ == "__main__":
     nus = [0, 1, 1, 0, -1, -1, 0, 5, 1, 0]
     lams = [1, 1, 1, -1, -1, -1, 1, 1, 10, 0.5]
 
-    mus = [100]
-    nus = [-100]
-    lams = [0.1]
     for i in range(len(mus)):
         plotBasRelief(B1, mus[i], nus[i], lams[i], s, "q2-f-" + str(i))
+
+    # Part 2 (g)
+    # experiments. (mu = 100, nu = -100, lambda = =0.1 in this case work sufficiently well)
+    mus = [100, 100, 100]
+    nus = [-100, 100, -100]
+    lams = [0.1, 0.1, 1]
+    for i in range(len(mus)):
+        plotBasRelief(B1, mus[i], nus[i], lams[i], s, "q2-g-" + str(i))
+
