@@ -287,4 +287,4 @@ if __name__ == "__main__":
 
     # Part 1(i)
     surface = estimateShape(normals, s)
-    plotSurface(surface)
+    plotSurface(surface, "q1-i")

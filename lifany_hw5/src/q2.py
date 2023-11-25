@@ -42,14 +42,17 @@ def estimatePseudonormalsUncalibrated(I):
     U = U[:, :3]
     VT = VT[:3, :]
     Sigma_sqrt = np.diag(np.sqrt(Sigma[:3]))
-    # L = np.matmul(U, Sigma_sqrt).T
-    # B = np.matmul(Sigma_sqrt, VT)
-    L = np.matmul(U, np.diag(Sigma[:3])).T
-    B = VT
+    L = np.matmul(U, Sigma_sqrt).T
+    B = np.matmul(Sigma_sqrt, VT)
+    # L = U.T
+    # B = np.matmul(np.diag(Sigma[:3]), VT)
+    # L = np.matmul(U, np.diag(Sigma[:3])).T
+    # B = VT
+    print(Sigma)
     return B, L
 
 
-def plotBasRelief(B, mu, nu, lam, s):
+def plotBasRelief(B, mu, nu, lam, s, fname):
     """
     Question 2 (f)
 
@@ -85,13 +88,14 @@ def plotBasRelief(B, mu, nu, lam, s):
     albedoIm, normalIm = displayAlbedosNormals(albedos2, normals2, s)
     # repeat (d)
     surface2 = estimateShape(normals2, s)
-    plotSurface(surface2)
+    plotSurface(surface2, fname)
 
 if __name__ == "__main__":
 
     # Part 2 (b)
     # Your code here
     I, L, s = loadData("../data/")
+    print("I", I)
     print("original L ", L)
     B1, L1 = estimatePseudonormalsUncalibrated(I)
 
@@ -104,7 +108,7 @@ if __name__ == "__main__":
     # Part 2 (d)
     # Your code here
     surface = estimateShape(normals, s)
-    plotSurface(surface)
+    plotSurface(surface, "q2-d")
 
     # Part 2 (e)
     # Your code here
@@ -113,12 +117,16 @@ if __name__ == "__main__":
     albedos1, normals1 = estimateAlbedosNormals(Bt)
     # repeat (d)
     surface_f = estimateShape(normals1, s)
-    plotSurface(surface_f)
+    plotSurface(surface_f, "q2-e")
 
     # Part 2 (f)
     # Your code here
-    mus = [1, 0, 1, -1, 0, -1, 5, 0, 1]
-    nus = [0, 1, 1, 0, -1, -1, 0, 5, 1]
-    lams = [1, 1, 1, -1, -1, -1, 1, 1, 10]
+    mus = [1, 0, 1, -1, 0, -1, -5, 0, 1, 0]
+    nus = [0, 1, 1, 0, -1, -1, 0, 5, 1, 0]
+    lams = [1, 1, 1, -1, -1, -1, 1, 1, 10, 0.5]
+
+    mus = [100]
+    nus = [-100]
+    lams = [0.1]
     for i in range(len(mus)):
-        plotBasRelief(B1, mus[i], nus[i], lams[i], s)
+        plotBasRelief(B1, mus[i], nus[i], lams[i], s, "q2-f-" + str(i))
