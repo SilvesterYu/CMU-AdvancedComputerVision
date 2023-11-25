@@ -152,5 +152,5 @@ def plotSurface(surface, suffix=""):
         x, y, -surface, cmap=cm.coolwarm, linewidth=0, antialiased=False
     )
     ax.view_init(elev=60.0, azim=75.0)
-    plt.savefig(f"faceCalibrated{suffix}.png")
+    plt.savefig(f"../results/faceCalibrated{suffix}.png")
     plt.show()

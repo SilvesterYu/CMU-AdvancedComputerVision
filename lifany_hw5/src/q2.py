@@ -101,8 +101,8 @@ if __name__ == "__main__":
 
     albedos, normals = estimateAlbedosNormals(B1)
     albedoIm, normalIm = displayAlbedosNormals(albedos, normals, s)
-    plt.imsave("2a-a.png", albedoIm, cmap="gray")
-    plt.imsave("2a-b.png", normalIm, cmap="rainbow")
+    plt.imsave("../results/2a-a.png", albedoIm, cmap="gray")
+    plt.imsave("../results/2a-b.png", normalIm, cmap="rainbow")
     print("estimated L ", L1)
 
     # Part 2 (d)

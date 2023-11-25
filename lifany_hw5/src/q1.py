@@ -246,21 +246,21 @@ if __name__ == "__main__":
     plt.figure()
     plt.imshow(image, cmap="gray")
     plt.show()
-    plt.imsave("1b-a.png", image, cmap="gray")
+    plt.imsave("../results/1b-a.png", image, cmap="gray")
 
     light = np.asarray([1, -1, 1]) / np.sqrt(3)
     image = renderNDotLSphere(center, radius, light, pxSize, res)
     plt.figure()
     plt.imshow(image, cmap="gray")
     plt.show()
-    plt.imsave("1b-b.png", image, cmap="gray")
+    plt.imsave("../results/1b-b.png", image, cmap="gray")
 
     light = np.asarray([-1, -1, 1]) / np.sqrt(3)
     image = renderNDotLSphere(center, radius, light, pxSize, res)
     plt.figure()
     plt.imshow(image, cmap="gray")
     plt.show()
-    plt.imsave("1b-c.png", image, cmap="gray")
+    plt.imsave("../results/1b-c.png", image, cmap="gray")
 
 
     # Part 1(c)
@@ -281,8 +281,8 @@ if __name__ == "__main__":
     # Part 1(f)
     albedos, normals = estimateAlbedosNormals(B)
     albedoIm, normalIm = displayAlbedosNormals(albedos, normals, s)
-    plt.imsave("1f-a.png", albedoIm, cmap="gray")
-    plt.imsave("1f-b.png", normalIm, cmap="rainbow")
+    plt.imsave("../results/1f-a.png", albedoIm, cmap="gray")
+    plt.imsave("../results/1f-b.png", normalIm, cmap="rainbow")
 
 
     # Part 1(i)
