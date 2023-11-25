@@ -42,14 +42,14 @@ def estimatePseudonormalsUncalibrated(I):
     U = U[:, :3]
     VT = VT[:3, :]
     Sigma_sqrt = np.diag(np.sqrt(Sigma[:3]))
-    L = np.matmul(U, Sigma_sqrt).T
-    B = np.matmul(Sigma_sqrt, VT)
-    # L = np.matmul(U, np.diag(Sigma[:3])).T
-    # B = VT
+    # L = np.matmul(U, Sigma_sqrt).T
+    # B = np.matmul(Sigma_sqrt, VT)
+    L = np.matmul(U, np.diag(Sigma[:3])).T
+    B = VT
     return B, L
 
 
-def plotBasRelief(B, mu, nu, lam):
+def plotBasRelief(B, mu, nu, lam, s):
     """
     Question 2 (f)
 
@@ -76,7 +76,16 @@ def plotBasRelief(B, mu, nu, lam):
     """
 
     # Your code here
-    pass
+    G = np.array([[1, 0, 0], 
+                  [0, 1, 0],
+                  [mu, nu, lam]])
+    Bt = enforceIntegrability(B, s)
+    B_bas = np.matmul(np.linalg.inv(G).T, Bt)
+    albedos2, normals2 = estimateAlbedosNormals(B_bas)
+    albedoIm, normalIm = displayAlbedosNormals(albedos2, normals2, s)
+    # repeat (d)
+    surface2 = estimateShape(normals2, s)
+    plotSurface(surface2)
 
 if __name__ == "__main__":
 
@@ -94,7 +103,6 @@ if __name__ == "__main__":
 
     # Part 2 (d)
     # Your code here
-    albedoIm, normalIm = displayAlbedosNormals(albedos, normals, s)
     surface = estimateShape(normals, s)
     plotSurface(surface)
 
@@ -103,10 +111,14 @@ if __name__ == "__main__":
     Bt = enforceIntegrability(B1, s)
     # repeat (b)
     albedos1, normals1 = estimateAlbedosNormals(Bt)
-    albedoIm, normalIm = displayAlbedosNormals(albedos1, normals1, s)
     # repeat (d)
     surface_f = estimateShape(normals1, s)
     plotSurface(surface_f)
 
     # Part 2 (f)
     # Your code here
+    mus = [1, 0, 1, -1, 0, -1, 5, 0, 1]
+    nus = [0, 1, 1, 0, -1, -1, 0, 5, 1]
+    lams = [1, 1, 1, -1, -1, -1, 1, 1, 10]
+    for i in range(len(mus)):
+        plotBasRelief(B1, mus[i], nus[i], lams[i], s)
