@@ -7,4 +7,8 @@ Homework 2: full mark
 
 Homework 3: full mark
 
-Homework 4: 
+Homework 4: full mark
+
+Homework 5:
+
+Homework 6:
