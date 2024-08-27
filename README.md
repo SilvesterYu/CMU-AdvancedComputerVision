@@ -1,5 +1,5 @@
 # CMU-AdvancedComputerVision
-My homework solution to CMU Advanced Computer Vision class, Fall 2023
+My homework solution to 16-720 CMU Advanced Computer Vision class, Fall 2023
 
 Homework 1: writeup is not full-mark, but all non-bonus question code works
 
